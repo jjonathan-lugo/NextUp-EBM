@@ -1,0 +1,120 @@
+{
+  "info": {
+    "name": "NextUp-EBM API",
+    "description": "Requests for every pages/api route in NextUp-EBM. Run `npm run dev` first (defaults to localhost:3000). Right now most routes just return placeholder data (TODOs aren't implemented yet) — this collection is for confirming each route responds with the right method/status/shape as you build it out.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000" }
+  ],
+  "item": [
+    {
+      "name": "Tasks (shared)",
+      "item": [
+        {
+          "name": "Get all tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/tasks", "host": ["{{base_url}}"], "path": ["api", "tasks"] }
+          }
+        },
+        {
+          "name": "Create a task",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Study for chem test\",\n  \"description\": \"Chapters 4-6\",\n  \"effort\": 4,\n  \"priority\": 5,\n  \"dueDate\": \"2026-08-05T00:00:00.000Z\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/tasks", "host": ["{{base_url}}"], "path": ["api", "tasks"] }
+          }
+        },
+        {
+          "name": "Get task by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/tasks/1", "host": ["{{base_url}}"], "path": ["api", "tasks", "1"] }
+          }
+        },
+        {
+          "name": "Update task by id",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_progress\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/tasks/1", "host": ["{{base_url}}"], "path": ["api", "tasks", "1"] }
+          }
+        },
+        {
+          "name": "Delete task by id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/tasks/1", "host": ["{{base_url}}"], "path": ["api", "tasks", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Smart Start (G)",
+      "item": [
+        {
+          "name": "Get recommended start time",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/start-time", "host": ["{{base_url}}"], "path": ["api", "start-time"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Focus / Weighting (J)",
+      "item": [
+        {
+          "name": "Calculate weight",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"effort\": 3,\n  \"priority\": 4\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/weighting", "host": ["{{base_url}}"], "path": ["api", "weighting"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Phone Correlation (M)",
+      "item": [
+        {
+          "name": "Get phone-time entries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/phone-time", "host": ["{{base_url}}"], "path": ["api", "phone-time"] }
+          }
+        },
+        {
+          "name": "Log phone-time entry",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"minutes\": 30\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/phone-time", "host": ["{{base_url}}"], "path": ["api", "phone-time"] }
+          }
+        }
+      ]
+    }
+  ]
+}
