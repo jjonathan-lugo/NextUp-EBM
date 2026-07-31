@@ -9,5 +9,6 @@ Everything you do here is contained within this one codespace. There is no repos
 To run this application:
 
 ```
+npm install (need this to be able to run in vscode)
 npm run dev
 ```

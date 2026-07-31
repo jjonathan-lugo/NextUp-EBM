@@ -1,3 +1,10 @@
+// Shared — coordinate before editing.
+// TODO: this is still the Next.js starter demo content. Per the handoff
+// doc this is meant to become the real homepage, likely composing all 3
+// features — including a spot for the Focus Queue
+// (components/shared/FocusQueue.js), which doesn't have an assigned
+// owner or page yet.
+
 import { useCallback, useEffect, useState } from 'react'
 import Button from '../components/Button'
 import ClickCount from '../components/ClickCount'
