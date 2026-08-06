@@ -9,6 +9,8 @@ import { useCallback, useEffect, useState } from 'react'
 import Button from '../components/Button'
 import ClickCount from '../components/ClickCount'
 import styles from '../styles/home.module.css'
+import Timer from '../components/features/Timer'
+import ProductivityFeed from '../components/features/ProductivityFeed'
 
 function throwError() {
   console.log(
@@ -35,6 +37,11 @@ function Home() {
 
   return (
     <main className={styles.main}>
+      <Timer />
+
+<ProductivityFeed />
+
+<hr className={styles.hr} />
       <h1>Fast Refresh Demo</h1>
       <p>
         Fast Refresh is a Next.js feature that gives you instantaneous feedback
