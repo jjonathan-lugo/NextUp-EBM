@@ -14,18 +14,34 @@ export default function FocusTimer() {
       <h2>Focus Timer</h2>
       <p>Time: {seconds}s</p>
 
-      {/* TODO(J): useTimer doesn't count yet — wire these up once it does */}
+      {/* TODO(J): buttons call the real start/pause/reset already — this is
+          blocked on hooks/useTimer.js actually counting via setInterval */}
       <Button onClick={start}>Start</Button>
       <Button onClick={pause}>Pause</Button>
       <Button onClick={reset}>Reset</Button>
 
       <div>
-        {/* TODO(J): show which mode is active (e.g. disable/highlight it) */}
-        <Button onClick={() => setMode('pomodoro')}>Pomodoro</Button>
-        <Button onClick={() => setMode('adaptive')}>Adaptive</Button>
+        <Button
+          onClick={() => setMode('pomodoro')}
+          disabled={mode === 'pomodoro'}
+          aria-pressed={mode === 'pomodoro'}
+        >
+          Pomodoro
+        </Button>
+        <Button
+          onClick={() => setMode('adaptive')}
+          disabled={mode === 'adaptive'}
+          aria-pressed={mode === 'adaptive'}
+        >
+          Adaptive
+        </Button>
       </div>
 
-      {mode === 'pomodoro' ? <PomodoroMode /> : <AdaptiveMode />}
+      {mode === 'pomodoro' ? (
+        <PomodoroMode seconds={seconds} />
+      ) : (
+        <AdaptiveMode seconds={seconds} />
+      )}
     </section>
   )
 }

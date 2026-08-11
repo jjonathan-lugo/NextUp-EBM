@@ -20,7 +20,7 @@ function hasHitDiminishingReturns(seconds, threshold) {
 
 // TODO(J): effort/seconds aren't passed down from FocusTimer yet — wire
 // those up once useTimer actually counts and a task is selected.
-export default function AdaptiveMode({ effort = 4, seconds = 22489 }) {
+export default function AdaptiveMode({ effort =1, seconds = 0 }) {
   const threshold = getDiminishingReturnsThreshold(effort)
   const shouldNudge = hasHitDiminishingReturns(seconds, threshold)
 
