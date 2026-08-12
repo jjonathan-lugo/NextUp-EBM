@@ -6,12 +6,20 @@ export function useStartTimeAlgorithm() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // TODO(G): call /api/start-time and set the recommendation.
-    // Doc flags this as the hardest part of the app: needs to reason about
-    // "realistic time available" — does it check other scheduled tasks,
-    // or just divide remaining days until dueDate? Prototype the logic on
-    // paper before coding.
-    setLoading(false)
+    async function getRecommendedTime() {
+      try {
+        const response = await fetch('/api/start-time')
+        const data = await response.json()
+
+        setRecommendedTime(data.recommendedTime)
+      } catch (error) {
+        console.error('Failed to get recommended start time:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    getRecommendedTime()
   }, [])
 
   return { recommendedTime, loading }
