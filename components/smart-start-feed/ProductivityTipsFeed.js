@@ -1,23 +1,32 @@
 // Owner: Grace
-import { useState, useEffect } from 'react'
-import TipCard from './TipCard'
+import TipCard from "./TipCard";
 
 export default function ProductivityTipsFeed() {
-  const [tips, setTips] = useState([])
-
-  useEffect(() => {
-    // TODO(G): fetch tips from an API or static source
-    setTips([])
-  }, [])
+  const tips = [
+    {
+      id: 1,
+      title: "Take Short Breaks",
+      body: "Taking short breaks can help you stay focused and avoid burnout.",
+    },
+    {
+      id: 2,
+      title: "Break Tasks Into Steps",
+      body: "Large tasks feel easier when you divide them into smaller steps.",
+    },
+    {
+      id: 3,
+      title: "Put Your Phone Away",
+      body: "Keeping distractions away can help you concentrate on your work.",
+    },
+  ];
 
   return (
-    <section>
-      <h2>Productivity Tips</h2>
-      {tips.length === 0 ? (
-        <p>No tips yet.</p>
-      ) : (
-        tips.map((tip) => <TipCard key={tip.id} tip={tip} />)
-      )}
-    </section>
-  )
+    <div>
+      <h2>Productivity Tips 💡</h2>
+
+      {tips.map((tip) => (
+        <TipCard key={tip.id} tip={tip} />
+      ))}
+    </div>
+  );
 }
