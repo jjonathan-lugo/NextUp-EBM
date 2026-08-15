@@ -7,64 +7,58 @@ export function useCorrelationData() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function loadData() {
+    async function loadCorrelationData() {
       try {
-        const response = await fetch('/api/phone-time')
+        const [phoneResponse, tasksResponse] =
+          await Promise.all([
+            fetch('/api/phone-time'),
+            fetch('/api/tasks'),
+          ])
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch phone-time data')
+        if (!phoneResponse.ok) {
+          throw new Error('Could not load phone-time data')
         }
 
-        const phoneData = await response.json()
+        if (!tasksResponse.ok) {
+          throw new Error('Could not load task data')
+        }
 
-        const correlationData = phoneData.map((item) => ({
-          date: item.date,
-          phoneMinutes: Number(item.phoneMinutes),
-          completedTasks: Number(item.completedTasks)
-        }))
+        const phoneEntries =
+          await phoneResponse.json()
+
+        const tasks =
+          await tasksResponse.json()
+
+        const completedTasks =
+          tasks.filter(
+            (task) => task.status === 'done'
+          ).length
+
+        const correlationData =
+          phoneEntries.map((entry) => ({
+            date: entry.date,
+            phoneMinutes: entry.minutes,
+            completedTasks,
+          }))
 
         setData(correlationData)
       } catch (error) {
-        console.error('Could not load correlation data:', error)
+        console.error(
+          'Failed to load correlation data:',
+          error
+        )
 
-        // Demo data for development
-        setData([
-          {
-            date: '2026-08-01',
-            phoneMinutes: 180,
-            completedTasks: 4
-          },
-          {
-            date: '2026-08-02',
-            phoneMinutes: 150,
-            completedTasks: 5
-          },
-          {
-            date: '2026-08-03',
-            phoneMinutes: 220,
-            completedTasks: 3
-          },
-          {
-            date: '2026-08-04',
-            phoneMinutes: 120,
-            completedTasks: 7
-          },
-          {
-            date: '2026-08-05',
-            phoneMinutes: 200,
-            completedTasks: 4
-          }
-        ])
+        setData([])
       } finally {
         setLoading(false)
       }
     }
 
-    loadData()
+    loadCorrelationData()
   }, [])
 
   return {
     data,
-    loading
+    loading,
   }
 }
