@@ -1,39 +1,22 @@
 // Owner: Grace
-// API route for the Smart Start feature.
-// Calculates a recommended start time based on a deadline and task duration.
+// Page route for the Smart Start + Productivity Tips Feed feature.
+// Composes components from components/smart-start-feed/*.
 
-export default function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({
-      error: 'Method not allowed',
-    })
-  }
+import StartTimeRecommendation from '../components/smart-start-feed/StartTimeRecommendation'
+import ProductivityTipsFeed from '../components/smart-start-feed/ProductivityTipsFeed'
+import styles from '../styles/smart-start-feed.module.css'
 
-  const { deadline, duration } = req.body
-
-  if (!deadline || !duration) {
-    return res.status(400).json({
-      error: 'Please provide a deadline and duration',
-    })
-  }
-
-  const deadlineTime = new Date(deadline)
-  const durationMinutes = Number(duration)
-
-  if (
-    Number.isNaN(deadlineTime.getTime()) ||
-    Number.isNaN(durationMinutes)
-  ) {
-    return res.status(400).json({
-      error: 'Invalid deadline or duration',
-    })
-  }
-
-  const startTime = new Date(
-    deadlineTime.getTime() - durationMinutes * 60 * 1000
+// TODO(G): add a loading/error state while StartTimeRecommendation and
+// ProductivityTipsFeed are fetching data, instead of rendering them blank
+// TODO(G): add page metadata (e.g. a <Head> title) once the app title is finalized
+function SmartStart() {
+  return (
+    <main className={styles.main}>
+      <h1>Smart Start</h1>
+      <StartTimeRecommendation />
+      <ProductivityTipsFeed />
+    </main>
   )
-
-  return res.status(200).json({
-    recommendedStartTime: startTime.toISOString(),
-  })
 }
+
+export default SmartStart
