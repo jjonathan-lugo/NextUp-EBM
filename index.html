@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Phone Correlation Tracker</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="hero">
+        <div class="container">
+            <p class="tag">PERSONAL ANALYTICS</p>
+
+            <h1>Phone Correlation Tracker</h1>
+
+            <p class="subtitle">
+                Track your screen time and discover how it relates
+                to sleep, studying, and mood.
+            </p>
+        </div>
+    </header>
+
+
+    <main class="container">
+
+        <!-- Add data -->
+        <section class="card">
+
+            <h2>Add Daily Data</h2>
+
+            <form id="dataForm">
+
+                <div class="form-grid">
+
+                    <div>
+                        <label for="date">Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+
+                    <div>
+                        <label for="screenTime">Screen Time (hours)</label>
+                        <input
+                            type="number"
+                            id="screenTime"
+                            min="0"
+                            max="24"
+                            step="0.1"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label for="sleep">Sleep (hours)</label>
+                        <input
+                            type="number"
+                            id="sleep"
+                            min="0"
+                            max="24"
+                            step="0.1"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label for="study">Study Time (hours)</label>
+                        <input
+                            type="number"
+                            id="study"
+                            min="0"
+                            max="24"
+                            step="0.1"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label for="mood">Mood (1–10)</label>
+                        <input
+                            type="number"
+                            id="mood"
+                            min="1"
+                            max="10"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <button type="submit">
+                    Add Entry
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- Statistics -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <p>Total Entries</p>
+                <h2 id="totalEntries">0</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Average Screen Time</p>
+                <h2 id="averageScreen">0h</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Average Mood</p>
+                <h2 id="averageMood">0/10</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Average Sleep</p>
+                <h2 id="averageSleep">0h</h2>
+            </div>
+
+        </section>
+
+
+        <!-- Correlations -->
+        <section class="card">
+
+            <h2>Correlation Analysis</h2>
+
+            <p class="description">
+                Pearson correlation shows how strongly two variables
+                are associated.
+            </p>
+
+            <div id="correlationResults">
+
+                <p class="empty">
+                    Add at least two entries to see correlations.
+                </p>
+
+            </div>
+
+            <p class="warning">
+                Correlation does not prove causation.
+            </p>
+
+        </section>
+
+
+        <!-- Data table -->
+        <section class="card">
+
+            <div class="section-header">
+
+                <h2>Your Data</h2>
+
+                <button
+                    id="clearButton"
+                    class="danger"
+                    type="button"
+                >
+                    Clear Data
+                </button>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Date</th>
+                            <th>Screen Time</th>
+                            <th>Sleep</th>
+                            <th>Study</th>
+                            <th>Mood</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="dataTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>Phone Correlation Tracker · Personal Data Project</p>
+    </footer>
+
+
+    <script src="analytics.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>
