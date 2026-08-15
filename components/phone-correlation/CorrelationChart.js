@@ -2,36 +2,55 @@
 
 import { useCorrelationData } from '../../hooks/useCorrelationData'
 
-
 function calculateCorrelation(data) {
   if (data.length < 2) {
     return 0
   }
 
-  const phone = data.map(item => item.phoneMinutes)
-  const tasks = data.map(item => item.completedTasks)
+  const phoneTimes = data.map(
+    (item) => item.phoneMinutes
+  )
+
+  const completedTasks = data.map(
+    (item) => item.completedTasks
+  )
 
   const phoneMean =
-    phone.reduce((sum, value) => sum + value, 0) / phone.length
+    phoneTimes.reduce(
+      (sum, value) => sum + value,
+      0
+    ) / phoneTimes.length
 
   const tasksMean =
-    tasks.reduce((sum, value) => sum + value, 0) / tasks.length
+    completedTasks.reduce(
+      (sum, value) => sum + value,
+      0
+    ) / completedTasks.length
 
   let numerator = 0
-  let phoneDifference = 0
-  let taskDifference = 0
+  let phoneVariance = 0
+  let tasksVariance = 0
 
   for (let i = 0; i < data.length; i++) {
-    const phoneDiff = phone[i] - phoneMean
-    const taskDiff = tasks[i] - tasksMean
+    const phoneDifference =
+      phoneTimes[i] - phoneMean
 
-    numerator += phoneDiff * taskDiff
-    phoneDifference += phoneDiff * phoneDiff
-    taskDifference += taskDiff * taskDiff
+    const taskDifference =
+      completedTasks[i] - tasksMean
+
+    numerator +=
+      phoneDifference * taskDifference
+
+    phoneVariance +=
+      phoneDifference ** 2
+
+    tasksVariance +=
+      taskDifference ** 2
   }
 
-  const denominator =
-    Math.sqrt(phoneDifference * taskDifference)
+  const denominator = Math.sqrt(
+    phoneVariance * tasksVariance
+  )
 
   if (denominator === 0) {
     return 0
@@ -40,43 +59,55 @@ function calculateCorrelation(data) {
   return numerator / denominator
 }
 
+function getStrength(correlation) {
+  const value = Math.abs(correlation)
 
-function getCorrelationDescription(value) {
-  const strength = Math.abs(value)
-
-  if (strength < 0.2) {
-    return 'Very weak relationship'
+  if (value < 0.2) {
+    return 'Very weak'
   }
 
-  if (strength < 0.4) {
-    return 'Weak relationship'
+  if (value < 0.4) {
+    return 'Weak'
   }
 
-  if (strength < 0.7) {
-    return 'Moderate relationship'
+  if (value < 0.7) {
+    return 'Moderate'
   }
 
-  return 'Strong relationship'
+  return 'Strong'
 }
 
-
 export default function CorrelationChart() {
-  const { data, loading } = useCorrelationData()
+  const { data, loading } =
+    useCorrelationData()
 
   if (loading) {
-    return <p>Loading correlation data...</p>
+    return (
+      <section>
+        <h2>Phone Time vs. Productivity</h2>
+        <p>Loading correlation data...</p>
+      </section>
+    )
   }
 
   if (data.length < 2) {
     return (
       <section>
         <h2>Phone Time vs. Productivity</h2>
-        <p>Not enough data to calculate correlation.</p>
+
+        <p>
+          Add at least two phone-time entries
+          to calculate a correlation.
+        </p>
       </section>
     )
   }
 
-  const correlation = calculateCorrelation(data)
+  const correlation =
+    calculateCorrelation(data)
+
+  const strength =
+    getStrength(correlation)
 
   return (
     <section>
@@ -87,62 +118,72 @@ export default function CorrelationChart() {
           padding: '20px',
           marginTop: '16px',
           border: '1px solid #ddd',
-          borderRadius: '12px'
+          borderRadius: '12px',
         }}
       >
         <h3>
-          Correlation: {correlation.toFixed(2)}
+          Correlation:{' '}
+          {correlation.toFixed(2)}
         </h3>
 
         <p>
-          {getCorrelationDescription(correlation)}
+          Relationship strength:{' '}
+          <strong>{strength}</strong>
         </p>
 
         <div
           style={{
-            display: 'flex',
-            alignItems: 'end',
-            gap: '12px',
-            height: '220px',
-            marginTop: '30px'
+            display: 'grid',
+            gap: '10px',
+            marginTop: '20px',
           }}
         >
           {data.map((item, index) => (
             <div
-              key={index}
+              key={`${item.date}-${index}`}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'end',
-                height: '100%',
-                flex: 1
+                padding: '12px',
+                background: '#f5f5f5',
+                borderRadius: '8px',
               }}
             >
-              <div
-                style={{
-                  width: '100%',
-                  maxWidth: '45px',
-                  height: `${Math.max(
-                    10,
-                    item.completedTasks * 25
-                  )}px`,
-                  background: '#6366f1',
-                  borderRadius: '6px 6px 0 0'
-                }}
-                title={`${item.completedTasks} completed tasks`}
-              />
+              <strong>{item.date}</strong>
 
-              <small>
-                {item.phoneMinutes}m
-              </small>
+              <div>
+                Phone time:{' '}
+                {item.phoneMinutes} minutes
+              </div>
+
+              <div>
+                Completed tasks:{' '}
+                {item.completedTasks}
+              </div>
             </div>
           ))}
         </div>
 
-        <p style={{ marginTop: '15px' }}>
-          Each bar represents completed tasks for a day.
-          The number below shows phone usage in minutes.
+        <p
+          style={{
+            marginTop: '20px',
+            fontSize: '14px',
+            color: '#666',
+          }}
+        >
+          A positive correlation means phone
+          time and completed tasks tend to
+          increase together. A negative
+          correlation means they tend to move
+          in opposite directions.
+        </p>
+
+        <p
+          style={{
+            fontSize: '13px',
+            color: '#777',
+          }}
+        >
+          Correlation shows an association;
+          it does not prove causation.
         </p>
       </div>
     </section>
