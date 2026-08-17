@@ -1,4 +1,6 @@
 // Owner: Jonathan Lugo
+import styles from '../../styles/focus-weighting.module.css'
+
 const WORK_SECONDS = 25 * 60
 const BREAK_SECONDS = 5 * 60
 const CYCLE_SECONDS = WORK_SECONDS + BREAK_SECONDS
@@ -26,7 +28,7 @@ export default function PomodoroMode({ seconds = 0 }) {
   return (
     <div>
       <p>Pomodoro mode: 25 min work / 5 min break</p>
-      <p>
+      <p className={styles.phase}>
         {phase === 'work' ? 'Work' : 'Break'} — {minutes}:{String(secs).padStart(2, '0')} left
       </p>
     </div>

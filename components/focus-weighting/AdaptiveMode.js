@@ -1,4 +1,6 @@
 // Owner: Jonathan Lugo
+import styles from '../../styles/focus-weighting.module.css'
+
 // v1 nudge logic: fixed time-threshold-per-effort-level heuristic (not real
 // ML/personalization) — real adaptivity is a stretch goal for later.
 const THRESHOLD_MINUTES_BY_EFFORT = {
@@ -28,7 +30,7 @@ export default function AdaptiveMode({ effort =1, seconds = 0 }) {
     <div>
       <p>Adaptive mode: interval based on task weight</p>
       {shouldNudge && (
-        <p role="status">
+        <p role="status" className={styles.nudge}>
           You&apos;ve been at this a while — might be worth a break or switching tasks.
         </p>
       )}

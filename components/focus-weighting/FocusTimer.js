@@ -4,23 +4,26 @@ import { useTimer } from '../../hooks/useTimer'
 import PomodoroMode from './PomodoroMode'
 import AdaptiveMode from './AdaptiveMode'
 import Button from '../Button'
+import styles from '../../styles/focus-weighting.module.css'
 
 export default function FocusTimer() {
   const [mode, setMode] = useState('pomodoro')
   const { seconds, isRunning, start, pause, reset } = useTimer()
 
   return (
-    <section>
+    <section className={styles.card}>
       <h2>Focus Timer</h2>
-      <p>Time: {seconds}s</p>
+      <p className={styles.timerDisplay}>{seconds}s</p>
 
       {/* TODO(J): buttons call the real start/pause/reset already — this is
           blocked on hooks/useTimer.js actually counting via setInterval */}
-      <Button onClick={start}>Start</Button>
-      <Button onClick={pause}>Pause</Button>
-      <Button onClick={reset}>Reset</Button>
+      <div className={styles.controls}>
+        <Button onClick={start}>Start</Button>
+        <Button onClick={pause}>Pause</Button>
+        <Button onClick={reset}>Reset</Button>
+      </div>
 
-      <div>
+      <div className={styles.modeToggle}>
         <Button
           onClick={() => setMode('pomodoro')}
           disabled={mode === 'pomodoro'}
@@ -37,11 +40,13 @@ export default function FocusTimer() {
         </Button>
       </div>
 
-      {mode === 'pomodoro' ? (
-        <PomodoroMode seconds={seconds} />
-      ) : (
-        <AdaptiveMode seconds={seconds} />
-      )}
+      <div className={styles.modeBody}>
+        {mode === 'pomodoro' ? (
+          <PomodoroMode seconds={seconds} />
+        ) : (
+          <AdaptiveMode seconds={seconds} />
+        )}
+      </div>
     </section>
   )
 }

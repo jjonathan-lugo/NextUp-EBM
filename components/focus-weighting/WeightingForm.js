@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useWeightCalculator } from '../../hooks/useWeightCalculator'
 import TaskWeightBar from './TaskWeightBar'
 import Button from '../Button'
+import styles from '../../styles/focus-weighting.module.css'
 
 export default function WeightingForm() {
   // Doc spec: effort and priority are each scored 1-5.
@@ -11,9 +12,9 @@ export default function WeightingForm() {
   const { weight, calculate } = useWeightCalculator()
 
   return (
-    <section>
+    <section className={styles.card}>
       <h2>Task Weighting</h2>
-      <label>
+      <label className={styles.field}>
         Effort (1-5)
         <input
           type="number"
@@ -23,7 +24,7 @@ export default function WeightingForm() {
           onChange={(e) => setEffort(Number(e.target.value))}
         />
       </label>
-      <label>
+      <label className={styles.field}>
         Priority (1-5)
         <input
           type="number"
