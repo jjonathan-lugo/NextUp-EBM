@@ -1,17 +1,25 @@
 // Owner: Grace
-import { useStartTimeAlgorithm } from '../../hooks/useStartTimeAlgorithm'
+export default function StartTimerRecommendations({ task }) {
+  if (!task) {
+    return <p>Select a task to get a timer recommendation.</p>;
+  }
 
-export default function StartTimeRecommendation() {
-  const { recommendedTime, loading } = useStartTimeAlgorithm()
+  let recommendedTime = 25;
 
-  if (loading) {
-    return <p>Calculating your best start time...</p>
+  if (task.priority === "high") {
+    recommendedTime = 45;
+  } else if (task.priority === "medium") {
+    recommendedTime = 30;
   }
 
   return (
-    <section>
-      <h2>Recommended Start Time</h2>
-      <p>{recommendedTime || 'No recommendation yet'}</p>
-    </section>
-  )
+    <div>
+      <h2>Recommended Focus Time</h2>
+      <p>
+        We recommend a {recommendedTime}-minute timer for:
+        {" "}
+        {task.name}
+      </p>
+    </div>
+  );
 }
