@@ -84,12 +84,56 @@
 }
 
 /* --- Focus Timer --- */
-.timerDisplay {
-  font-size: 2.75rem;
+/* Circular clock face (TimerClock.js) replacing the old plain "125s"
+   text line. .clockTrack is the full background ring; .clockProgress
+   draws over it and sweeps a full turn every 60 seconds (see
+   TimerClock.js for the pathLength/dash-offset math), colored muted
+   while paused and accent while running so the ring itself signals
+   run/pause state, not just the Start/Pause buttons below it. */
+.clockWrap {
+  display: flex;
+  justify-content: center;
+  margin: 0.25rem 0 1.5rem;
+}
+
+.clockFace {
+  width: 180px;
+  height: 180px;
+}
+
+.clockTrack {
+  fill: none;
+  stroke: var(--surface-muted);
+  stroke-width: 8;
+}
+
+.clockProgress {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s linear, stroke 0.2s ease;
+}
+
+.clockFaceRunning .clockProgress {
+  stroke: var(--accent);
+}
+
+.tickMajor {
+  stroke: var(--text-muted);
+  stroke-width: 2.5;
+}
+
+.tickMinor {
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.clockTime {
+  fill: var(--text);
+  font-size: 28px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
-  margin: 0.1rem 0 1.25rem;
 }
 
 .controls {

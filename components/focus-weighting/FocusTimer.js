@@ -4,6 +4,7 @@ import { useTimer } from '../../hooks/useTimer'
 import { useAuth } from '../../hooks/useAuth'
 import { authFetch } from '../../data/authFetch'
 import TaskCard from '../shared/TaskCard'
+import TimerClock from './TimerClock'
 import PomodoroMode from './PomodoroMode'
 import AdaptiveMode from './AdaptiveMode'
 import Button from '../Button'
@@ -148,7 +149,7 @@ export default function FocusTimer() {
 
       {selectedTask && <TaskCard task={selectedTask} showTimer />}
 
-      <p className={styles.timerDisplay}>{seconds}s</p>
+      <TimerClock seconds={seconds} isRunning={isRunning} />
 
       <div className={styles.controls}>
         <Button onClick={start}>Start</Button>
