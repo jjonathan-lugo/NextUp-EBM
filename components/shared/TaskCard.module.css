@@ -16,6 +16,11 @@
 .clickable {
   cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  /* Same reasoning as smart-start-feed.module.css's .tipStack — quick
+     repeated clicks on a card shouldn't start highlighting its text. */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
 }
 
 .clickable:hover {

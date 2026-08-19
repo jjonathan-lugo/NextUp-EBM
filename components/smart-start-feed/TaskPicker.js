@@ -21,17 +21,18 @@
 // purely by weight (priority + effort), via rankByWeight in
 // data/rankTasks.js.
 //
-// Also handles marking a task done and deleting it — both immediately
-// re-rank whichever decision that task belonged to (a completed/deleted
-// task can't remain the decided task, and the next-best one takes its
-// place automatically) — and editing a task's fields (e.g. adding a
-// missing due date, which moves it from the "no deadline" decision into
-// the due-date one on the next render). This is the only place in the
-// app that lists every task, so it's also where all of that management
-// happens; the full "All Tasks" list is always visible (was previously
-// behind a "Show all tasks" toggle) but capped to a scrollable panel
-// (.taskList in smart-start-feed.module.css) so it doesn't push the
-// rest of the page down.
+// This component only renders the two decision cards now — it used to
+// also own the full "All Tasks" list and all the fetching/mutation state
+// behind everything, but that's been lifted into
+// hooks/useTaskManagement.js so AllTasksList.js (rendered separately,
+// under Productivity Tips on the Smart Start page) can share the exact
+// same task state instead of fetching its own independent copy. Both
+// components now receive that state/those handlers as props from
+// pages/smart-start.js, which is the single place useTaskManagement() is
+// called. EditTaskForm, UrgencyBadge, and describeRecommendation are
+// exported (not just used locally) because AllTasksList.js needs the
+// identical edit form and badge for its own rows — same behavior, one
+// definition.
 //
 // Persistence: tasks live in Supabase (data/taskStore.js), not browser
 // storage, so anything done here — marking done, deleting, editing —
@@ -40,11 +41,9 @@
 import { useEffect, useState } from 'react'
 import TaskCard from '../shared/TaskCard'
 import Button from '../Button'
-import { useTimezone } from '../../hooks/useTimezone'
 import { zonedTimeToUtc, utcToZonedDateTimeLocal, formatZonedDate, formatZonedDateTime, formatZonedTime, isSameZonedDay } from '../../data/timezone'
 import { rankTasks, rankByWeight, urgencyTier, URGENCY } from '../../data/rankTasks'
 import { minLeadDays } from '../../data/scheduleTasks'
-import { fetchRecommendations } from '../../data/fetchRecommendations'
 import { authFetch } from '../../data/authFetch'
 import styles from '../../styles/smart-start-feed.module.css'
 
@@ -58,8 +57,7 @@ function noticeHint(effort) {
   return `Smart Start will recommend starting at least ${days} day${days === 1 ? '' : 's'} before the due date.`
 }
 
-function EditTaskForm({ task, onCancel, onSaved }) {
-  const { timezone } = useTimezone()
+export function EditTaskForm({ task, timezone, onCancel, onSaved }) {
   const [title, setTitle] = useState(task.title)
   const [dueDate, setDueDate] = useState('')
   const [effort, setEffort] = useState(task.effort)
@@ -187,9 +185,9 @@ function describeAnytimeDecision(task) {
   return `No due date — highest priority by weight (${task.weight ?? '—'}) among tasks without a deadline.`
 }
 
-// Builds the human-readable recommendation line for one task in the full
-// (secondary) list.
-function describeRecommendation(task, recommendation, timezone, recommendationsLoading) {
+// Builds the human-readable recommendation line for one task in
+// AllTasksList's rows.
+export function describeRecommendation(task, recommendation, timezone, recommendationsLoading) {
   if (task.status === 'done') {
     return 'Done.'
   }
@@ -222,7 +220,7 @@ function describeRecommendation(task, recommendation, timezone, recommendationsL
 // with why a task was actually picked. Tasks with no due date don't get
 // one here — they're already labeled by the "No Deadline" section they
 // live in.
-function UrgencyBadge({ task, recommendation, timezone }) {
+export function UrgencyBadge({ task, recommendation, timezone }) {
   if (!task.dueDate) return null
 
   const tier = urgencyTier(task, recommendation, new Date().toISOString(), timezone)
@@ -236,111 +234,19 @@ function UrgencyBadge({ task, recommendation, timezone }) {
   return <span className={`${styles.badge} ${badge.className}`}>{badge.label}</span>
 }
 
-export default function TaskPicker() {
-  const { timezone } = useTimezone()
-  const [tasks, setTasks] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [editingId, setEditingId] = useState(null)
-  const [recommendations, setRecommendations] = useState({})
-  const [recommendationsLoading, setRecommendationsLoading] = useState(false)
-  const [actionError, setActionError] = useState('')
-
-  useEffect(() => {
-    loadTasks()
-  }, [])
-
-  // Re-fetches the whole batch whenever the task list changes (initial
-  // load, after an edit, or after marking done/deleting) or the detected
-  // timezone changes.
-  useEffect(() => {
-    const schedulable = tasks.filter((task) => task.status !== 'done' && task.dueDate)
-    if (schedulable.length === 0) {
-      setRecommendations({})
-      return undefined
-    }
-
-    let cancelled = false
-
-    async function loadRecommendations() {
-      setRecommendationsLoading(true)
-      try {
-        const byTaskId = await fetchRecommendations(timezone)
-        if (!cancelled) setRecommendations(byTaskId)
-      } catch (error) {
-        console.error('Failed to load start-time recommendations:', error)
-        if (!cancelled) setRecommendations({})
-      } finally {
-        if (!cancelled) setRecommendationsLoading(false)
-      }
-    }
-
-    loadRecommendations()
-
-    return () => {
-      cancelled = true
-    }
-  }, [tasks, timezone])
-
-  async function loadTasks() {
-    setLoading(true)
-    try {
-      const response = await authFetch('/api/tasks')
-      if (!response.ok) {
-        throw new Error('Could not load tasks')
-      }
-      const data = await response.json()
-      setTasks(data)
-    } catch (error) {
-      console.error('Failed to load tasks:', error)
-      setTasks([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  function handleSaved(updatedTask) {
-    setTasks((prev) => prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)))
-    setEditingId(null)
-  }
-
-  async function handleMarkDone(taskId) {
-    setActionError('')
-    try {
-      const response = await authFetch(`/api/tasks/${taskId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'done' }),
-      })
-      if (!response.ok) {
-        throw new Error('Failed to mark task done')
-      }
-      const updated = await response.json()
-      setTasks((prev) => prev.map((task) => (task.id === updated.id ? updated : task)))
-    } catch (error) {
-      console.error(error)
-      setActionError('Could not mark that task done.')
-    }
-  }
-
-  async function handleDelete(taskId) {
-    if (typeof window !== 'undefined' && !window.confirm('Delete this task? This can’t be undone.')) {
-      return
-    }
-
-    setActionError('')
-    try {
-      const response = await authFetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
-      if (!response.ok && response.status !== 204) {
-        throw new Error('Failed to delete task')
-      }
-      setTasks((prev) => prev.filter((task) => task.id !== taskId))
-      if (editingId === taskId) setEditingId(null)
-    } catch (error) {
-      console.error(error)
-      setActionError('Could not delete that task.')
-    }
-  }
-
+export default function TaskPicker({
+  tasks,
+  loading,
+  editingId,
+  setEditingId,
+  recommendations,
+  recommendationsLoading,
+  actionError,
+  timezone,
+  handleSaved,
+  handleMarkDone,
+  handleDelete,
+}) {
   if (loading) {
     return <p>Loading tasks...</p>
   }
@@ -374,6 +280,7 @@ export default function TaskPicker() {
         <div className={styles.decisionCard}>
           <EditTaskForm
             task={decidedTask}
+            timezone={timezone}
             onCancel={() => setEditingId(null)}
             onSaved={handleSaved}
           />
@@ -401,6 +308,7 @@ export default function TaskPicker() {
         <div className={styles.decisionCard}>
           <EditTaskForm
             task={decidedAnytimeTask}
+            timezone={timezone}
             onCancel={() => setEditingId(null)}
             onSaved={handleSaved}
           />
@@ -417,49 +325,6 @@ export default function TaskPicker() {
           </div>
         </div>
       )}
-
-      <h2 className={styles.sectionTitle}>All Tasks</h2>
-      <ul className={styles.taskList}>
-        {tasks.map((task) =>
-          editingId === task.id ? (
-            <li key={task.id} className={styles.taskRow}>
-              <EditTaskForm
-                task={task}
-                onCancel={() => setEditingId(null)}
-                onSaved={handleSaved}
-              />
-            </li>
-          ) : (
-            <li key={task.id} className={styles.taskRow}>
-              {task.status !== 'done' && (
-                <UrgencyBadge task={task} recommendation={recommendations[task.id]} timezone={timezone} />
-              )}
-              <span
-                className={
-                  task.status === 'done'
-                    ? `${styles.taskTitle} ${styles.taskDone}`
-                    : styles.taskTitle
-                }
-              >
-                {task.title}
-              </span>
-              <span className={styles.taskMeta}>
-                {'Weight: '}
-                {task.weight ?? '—'}
-                {' — '}
-                {describeRecommendation(task, recommendations[task.id], timezone, recommendationsLoading)}
-              </span>
-              <div className={styles.taskActions}>
-                <Button variant="ghost" onClick={() => setEditingId(task.id)}>Edit</Button>
-                {task.status !== 'done' && (
-                  <Button variant="success" onClick={() => handleMarkDone(task.id)}>Mark done</Button>
-                )}
-                <Button variant="danger" onClick={() => handleDelete(task.id)}>Delete</Button>
-              </div>
-            </li>
-          )
-        )}
-      </ul>
     </div>
   )
 }

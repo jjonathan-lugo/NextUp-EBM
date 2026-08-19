@@ -237,6 +237,13 @@
   width: 100%;
   margin-bottom: var(--space);
   cursor: pointer;
+  /* Rapid/repeated clicks (drawing several tips in a row) would
+     otherwise start highlighting the title/body text underneath the
+     cursor like a double-click text selection — this stops that
+     without affecting selection anywhere else on the page. */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
 }
 
 /* Two more "cards" peeking out from behind the real one, built with
