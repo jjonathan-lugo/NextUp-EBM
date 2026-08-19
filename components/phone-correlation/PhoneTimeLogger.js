@@ -7,9 +7,14 @@
 // data/phoneTimeStore.js) — this just combines the two fields before
 // sending.
 //
-// Both are <select> dropdowns instead of number inputs — picking a
-// value is faster and can't produce an invalid one (no empty field, no
-// negative number, no typo), unlike a free-text number input.
+// Hours/minutes are a grid of always-visible option buttons, not a
+// <select> dropdown or number input — every value is on screen at
+// once, and clicking one just highlights it blue (.pickerOptionSelected)
+// instead of opening/closing anything. Also doubles as the fix for the
+// Log Phone Time card leaving empty space below it next to the taller
+// correlation card (see phone-correlation.module.css's .grid) — a full
+// grid of buttons naturally takes up real vertical room instead of a
+// couple of compact form fields.
 import { useState } from 'react'
 import Button from '../Button'
 import { authFetch } from '../../data/authFetch'
@@ -18,15 +23,38 @@ import styles from '../../styles/phone-correlation.module.css'
 const HOUR_OPTIONS = Array.from({ length: 24 }, (_, hour) => hour)
 const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => i * 5) // 0, 5, 10, ... 55
 
+function TimePicker({ label, options, value, onSelect }) {
+  return (
+    <div className={styles.pickerGroup}>
+      <span className={styles.pickerLabel}>{label}</span>
+      <div className={styles.pickerGrid}>
+        {options.map((option) => (
+          <button
+            key={option}
+            type="button"
+            className={
+              value === option
+                ? `${styles.pickerOption} ${styles.pickerOptionSelected}`
+                : styles.pickerOption
+            }
+            aria-pressed={value === option}
+            onClick={() => onSelect(option)}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function PhoneTimeLogger() {
-  const [hours, setHours] = useState('0')
-  const [minutes, setMinutes] = useState('0')
+  const [hours, setHours] = useState(0)
+  const [minutes, setMinutes] = useState(0)
   const [message, setMessage] = useState('')
 
   async function handleLog() {
-    const hoursValue = Number(hours)
-    const minutesValue = Number(minutes)
-    const totalMinutes = hoursValue * 60 + minutesValue
+    const totalMinutes = hours * 60 + minutes
 
     if (totalMinutes <= 0) {
       setMessage('Select some time before logging.')
@@ -49,8 +77,8 @@ export default function PhoneTimeLogger() {
         throw new Error('Failed to save phone time')
       }
 
-      setHours('0')
-      setMinutes('0')
+      setHours(0)
+      setMinutes(0)
       setMessage('Phone time logged successfully.')
     } catch (error) {
       console.error(error)
@@ -62,29 +90,12 @@ export default function PhoneTimeLogger() {
     <section className={styles.card}>
       <h2>Log Phone Time</h2>
 
-      <div className={styles.loggerFields}>
-        <label className={styles.field}>
-          Hours
-          <select value={hours} onChange={(e) => setHours(e.target.value)}>
-            {HOUR_OPTIONS.map((hour) => (
-              <option key={hour} value={hour}>{hour}</option>
-            ))}
-          </select>
-        </label>
+      <TimePicker label="Hours" options={HOUR_OPTIONS} value={hours} onSelect={setHours} />
+      <TimePicker label="Minutes" options={MINUTE_OPTIONS} value={minutes} onSelect={setMinutes} />
 
-        <label className={styles.field}>
-          Minutes
-          <select value={minutes} onChange={(e) => setMinutes(e.target.value)}>
-            {MINUTE_OPTIONS.map((minute) => (
-              <option key={minute} value={minute}>{minute}</option>
-            ))}
-          </select>
-        </label>
-
-        <Button onClick={handleLog}>
-          Log
-        </Button>
-      </div>
+      <Button onClick={handleLog}>
+        Log
+      </Button>
 
       {message && <p className={styles.message}>{message}</p>}
     </section>

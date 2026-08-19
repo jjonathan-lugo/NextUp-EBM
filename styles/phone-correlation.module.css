@@ -77,31 +77,66 @@
 }
 
 /* --- Phone-time logger --- */
-.loggerFields {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  align-items: flex-end;
+/* Every hour/minute value is its own button, always visible — no
+   dropdown to open, no number to type. Selecting one just re-renders
+   with .pickerOptionSelected on that button; nothing opens or closes. */
+.pickerGroup {
+  margin-bottom: 1.25rem;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+.pickerGroup:last-of-type {
+  margin-bottom: 1rem;
+}
+
+.pickerLabel {
+  display: block;
+  margin-bottom: 0.5rem;
   font-size: 0.85rem;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
-.field input,
-.field select {
-  padding: 0.5em;
+.pickerGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+}
+
+.pickerOption {
+  padding: 0.55em 0;
   border: 1px solid var(--border);
   border-radius: 8px;
-  font-size: 1rem;
-  width: 5rem;
-  font-family: inherit;
-  color: var(--text);
   background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  /* Same reasoning as TaskCard's .clickable / the tip card's
+     .tipStack — clicking through several of these in a row shouldn't
+     start highlighting the numbers like a text selection. */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+.pickerOption:hover {
+  border-color: var(--accent);
+}
+
+.pickerOption:active {
+  transform: scale(0.94);
+}
+
+/* The selected hour/minute — solid accent fill, same "this one is
+   active" treatment as .modeToggle's pressed state in
+   focus-weighting.module.css. */
+.pickerOptionSelected,
+.pickerOptionSelected:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
 }
 
 .message {
@@ -210,13 +245,7 @@
     padding: 1.25rem;
   }
 
-  .loggerFields {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .field input,
-  .field select {
-    width: 100%;
+  .pickerGrid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
