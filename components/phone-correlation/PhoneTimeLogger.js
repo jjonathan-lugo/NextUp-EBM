@@ -6,34 +6,30 @@
 // unchanged — still a single total-minutes number (see
 // data/phoneTimeStore.js) — this just combines the two fields before
 // sending.
+//
+// Both are <select> dropdowns instead of number inputs — picking a
+// value is faster and can't produce an invalid one (no empty field, no
+// negative number, no typo), unlike a free-text number input.
 import { useState } from 'react'
 import Button from '../Button'
 import { authFetch } from '../../data/authFetch'
 import styles from '../../styles/phone-correlation.module.css'
 
+const HOUR_OPTIONS = Array.from({ length: 24 }, (_, hour) => hour)
+const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => i * 5) // 0, 5, 10, ... 55
+
 export default function PhoneTimeLogger() {
-  const [hours, setHours] = useState('')
-  const [minutes, setMinutes] = useState('')
+  const [hours, setHours] = useState('0')
+  const [minutes, setMinutes] = useState('0')
   const [message, setMessage] = useState('')
 
   async function handleLog() {
-    const hoursValue = hours === '' ? 0 : Number(hours)
-    const minutesValue = minutes === '' ? 0 : Number(minutes)
-
-    if (
-      !Number.isFinite(hoursValue) ||
-      hoursValue < 0 ||
-      !Number.isFinite(minutesValue) ||
-      minutesValue < 0
-    ) {
-      setMessage('Please enter a valid number of hours and/or minutes.')
-      return
-    }
-
+    const hoursValue = Number(hours)
+    const minutesValue = Number(minutes)
     const totalMinutes = hoursValue * 60 + minutesValue
 
     if (totalMinutes <= 0) {
-      setMessage('Enter some time before logging.')
+      setMessage('Select some time before logging.')
       return
     }
 
@@ -53,8 +49,8 @@ export default function PhoneTimeLogger() {
         throw new Error('Failed to save phone time')
       }
 
-      setHours('')
-      setMinutes('')
+      setHours('0')
+      setMinutes('0')
       setMessage('Phone time logged successfully.')
     } catch (error) {
       console.error(error)
@@ -69,25 +65,20 @@ export default function PhoneTimeLogger() {
       <div className={styles.loggerFields}>
         <label className={styles.field}>
           Hours
-          <input
-            type="number"
-            min="0"
-            value={hours}
-            placeholder="0"
-            onChange={(e) => setHours(e.target.value)}
-          />
+          <select value={hours} onChange={(e) => setHours(e.target.value)}>
+            {HOUR_OPTIONS.map((hour) => (
+              <option key={hour} value={hour}>{hour}</option>
+            ))}
+          </select>
         </label>
 
         <label className={styles.field}>
           Minutes
-          <input
-            type="number"
-            min="0"
-            max="59"
-            value={minutes}
-            placeholder="0"
-            onChange={(e) => setMinutes(e.target.value)}
-          />
+          <select value={minutes} onChange={(e) => setMinutes(e.target.value)}>
+            {MINUTE_OPTIONS.map((minute) => (
+              <option key={minute} value={minute}>{minute}</option>
+            ))}
+          </select>
         </label>
 
         <Button onClick={handleLog}>
