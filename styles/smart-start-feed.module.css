@@ -146,13 +146,23 @@
   margin: 0.5rem 0 1rem;
 }
 
+/* Capped height + its own scrollbar instead of growing the page —
+   "Show all tasks" could otherwise push the rest of the page (and the
+   other grid column) down by however many tasks exist. Bordered/muted
+   background so it reads as one contained panel, with inner padding so
+   rows don't touch the edges of that panel. */
 .taskList {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0.6rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-muted);
 }
 
 .taskRow {
