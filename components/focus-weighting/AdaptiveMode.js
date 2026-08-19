@@ -20,18 +20,26 @@ function hasHitDiminishingReturns(seconds, threshold) {
   return seconds >= threshold
 }
 
-// TODO(J): effort/seconds aren't passed down from FocusTimer yet — wire
-// those up once useTimer actually counts and a task is selected.
-export default function AdaptiveMode({ effort =1, seconds = 0 }) {
+// effort/seconds/taskTitle are wired up from FocusTimer.js's task picker —
+// effort comes from whichever task is selected there (defaults to 1, the
+// shortest threshold, if none is selected), so a heavier task earns more
+// uninterrupted time before this nudges a break.
+export default function AdaptiveMode({ effort = 1, seconds = 0, taskTitle = '' }) {
   const threshold = getDiminishingReturnsThreshold(effort)
   const shouldNudge = hasHitDiminishingReturns(seconds, threshold)
+  const thresholdMinutes = Math.round(threshold / 60)
 
   return (
     <div>
-      <p>Adaptive mode: interval based on task weight</p>
+      <p>
+        Adaptive mode: nudges after about {thresholdMinutes} min
+        {taskTitle ? ` on "${taskTitle}"` : ' (no task selected)'} — effort {effort}
+      </p>
       {shouldNudge && (
         <p role="status" className={styles.nudge}>
-          You&apos;ve been at this a while — might be worth a break or switching tasks.
+          {taskTitle
+            ? `You've been on "${taskTitle}" a while — might be worth a break or switching tasks.`
+            : "You've been at this a while — might be worth a break or switching tasks."}
         </p>
       )}
     </div>

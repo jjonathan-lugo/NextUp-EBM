@@ -17,8 +17,6 @@ function getRemainingInPhase(seconds) {
     : CYCLE_SECONDS - elapsedInCycle
 }
 
-// TODO(J): seconds comes from FocusTimer's shared useTimer, which doesn't
-// actually count yet — this will show 25:00 work until that's wired up.
 export default function PomodoroMode({ seconds = 0 }) {
   const phase = getPhase(seconds)
   const remaining = getRemainingInPhase(seconds)

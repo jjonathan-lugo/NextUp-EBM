@@ -114,13 +114,17 @@
   color: var(--text-muted);
 }
 
-.field input {
+.field input,
+.field select {
   padding: 0.5em;
   border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 1rem;
   width: 100%;
   max-width: 20rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
 }
 
 .field input[type='number'] {
