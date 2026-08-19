@@ -8,11 +8,11 @@ import WeightingForm from '../components/focus-weighting/WeightingForm'
 import RequireAuth from '../components/shared/RequireAuth'
 import styles from '../styles/focus-weighting.module.css'
 
-// TODO(J): add a loading/error state while FocusTimer and WeightingForm
-// are fetching/computing data, instead of rendering them blank — not
-// implemented here since neither actually fetches anything async right
-// now (useTimer and useWeightCalculator are both synchronous local
-// state). Revisit once one of them calls a real API, e.g. pages/api/weighting.js.
+// FocusTimer now fetches the signed-in user's tasks for its task picker,
+// so it handles its own loading state internally (see its `tasksLoading`)
+// rather than this page needing to orchestrate one. WeightingForm still
+// has no async fetch on mount (useWeightCalculator is synchronous local
+// state) — it just POSTs on Save, which its own `saving` state already covers.
 function Focus() {
   return (
     <>

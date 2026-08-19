@@ -3,7 +3,9 @@
 // customize what it shows without needing its own card component.
 //
 // showWeight     — smart-start-feed / focus-weighting: show computed weight
-// showTimer      — focus-weighting: show time spent this session
+// showTimer      — focus-weighting: show total logged time (task.timeSpentSeconds,
+//                  persisted via FocusTimer.js — cumulative across sessions, not
+//                  just the current one)
 // showPhoneStat  — phone-correlation: show phone-time stat for this task
 import styles from './TaskCard.module.css'
 

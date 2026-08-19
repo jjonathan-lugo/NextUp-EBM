@@ -1,7 +1,6 @@
 // Owner: Jonathan Lugo
-// `max` should match whatever scale the real weight formula in
-// data/models/Task.js ends up using (effort 1-5 + priority 1-5 = 2-10
-// for a naive sum, but see the TODO there about Eisenhower-style weighting).
+// `max` matches the confirmed weight formula's range — data/weightFormula.js
+// scales priority*1.5 + effort*0.5 (each 1-5) to land in 2-10.
 import styles from '../../styles/focus-weighting.module.css'
 
 export default function TaskWeightBar({ weight = 0, max = 10 }) {
