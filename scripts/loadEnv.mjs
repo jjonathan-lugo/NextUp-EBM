@@ -9,7 +9,14 @@ export function loadEnvLocal() {
     for (const line of contents.split('\n')) {
       const match = line.match(/^([A-Z0-9_]+)=(.*)$/)
       if (match && !(match[1] in process.env)) {
-        process.env[match[1]] = match[2]
+        // Strip a matching pair of surrounding quotes, same as Next.js's
+        // own .env loader does (and as the Vercel CLI now writes them —
+        // e.g. SUPABASE_URL="https://..."). Without this, createClient()
+        // gets a URL string with literal quote characters still in it
+        // and fails with "Invalid supabaseUrl".
+        const value = match[2]
+        const unquoted = /^(['"])(.*)\1$/.exec(value)
+        process.env[match[1]] = unquoted ? unquoted[2] : value
       }
     }
   } catch {
