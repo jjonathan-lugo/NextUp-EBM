@@ -9,6 +9,7 @@ import {
   isSameZonedDay,
   formatZonedDate,
   formatZonedTime,
+  formatZonedDateTime,
   zonedDayKey,
   startOfZonedDay,
   addZonedDays,
@@ -111,5 +112,18 @@ describe('formatZonedDate / formatZonedTime', () => {
   it('formats a time in the given timezone', () => {
     // 15:00 UTC is 11:00 AM in New York (EDT, UTC-4).
     expect(formatZonedTime('2026-08-19T15:00:00Z', 'America/New_York')).toBe('11:00 AM')
+  })
+})
+
+describe('formatZonedDateTime', () => {
+  it('combines the date and time output, in the given timezone', () => {
+    expect(formatZonedDateTime('2026-08-19T15:00:00Z', 'UTC')).toBe('August 19, 2026 at 3:00 PM')
+  })
+
+  it('is timezone-aware, not just a UTC passthrough', () => {
+    // 15:00 UTC is 11:00 AM in New York (EDT, UTC-4) — same calendar day.
+    expect(formatZonedDateTime('2026-08-19T15:00:00Z', 'America/New_York')).toBe(
+      'August 19, 2026 at 11:00 AM'
+    )
   })
 })

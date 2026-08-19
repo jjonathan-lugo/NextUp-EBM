@@ -10,13 +10,18 @@
 // dates approach or pass, not just when a task's weight changes, and
 // naturally drops a task the moment it's marked done or deleted (both
 // re-fetch on next mount, e.g. navigating back to the homepage).
+//
+// Returns the FULL ranked queue (every non-done task) rather than
+// slicing to a fixed size here — a hardcoded top-3 was fine as a
+// choice-overload default, but a user who wants to plan out more of
+// their day in advance had no way to see past it. FocusQueue.js is what
+// decides how many of these to actually show, defaulting to 3 with a
+// "Show more" control.
 import { useEffect, useState } from 'react'
 import { useTimezone } from './useTimezone'
 import { rankTasks } from '../data/rankTasks'
 import { fetchRecommendations } from '../data/fetchRecommendations'
 import { authFetch } from '../data/authFetch'
-
-const MAX_QUEUE_SIZE = 3
 
 export function useFocusQueue() {
   const { timezone } = useTimezone()
@@ -47,7 +52,7 @@ export function useFocusQueue() {
         }
 
         if (!cancelled) {
-          const queue = rankTasks(allTasks, recommendations, timezone).slice(0, MAX_QUEUE_SIZE)
+          const queue = rankTasks(allTasks, recommendations, timezone)
           setTasks(queue)
         }
       } catch (error) {

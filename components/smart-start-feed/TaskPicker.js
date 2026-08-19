@@ -39,7 +39,7 @@ import { useEffect, useState } from 'react'
 import TaskCard from '../shared/TaskCard'
 import Button from '../Button'
 import { useTimezone } from '../../hooks/useTimezone'
-import { zonedTimeToUtc, utcToZonedDateTimeLocal, formatZonedDate, formatZonedTime, isSameZonedDay } from '../../data/timezone'
+import { zonedTimeToUtc, utcToZonedDateTimeLocal, formatZonedDate, formatZonedDateTime, formatZonedTime, isSameZonedDay } from '../../data/timezone'
 import { rankTasks, rankByWeight, urgencyTier, URGENCY } from '../../data/rankTasks'
 import { fetchRecommendations } from '../../data/fetchRecommendations'
 import { authFetch } from '../../data/authFetch'
@@ -162,9 +162,9 @@ function describeDecision(task, recommendation, timezone) {
     return `Due today — start by ${formatZonedTime(suggestedTime, timezone)} to finish on time.`
   }
   if (recommendedStart && isSameZonedDay(recommendedStart, new Date().toISOString(), timezone)) {
-    return `Due ${formatZonedDate(task.dueDate, timezone)} — start today to stay on track.`
+    return `Due ${formatZonedDateTime(task.dueDate, timezone)} — start today to stay on track.`
   }
-  return `Highest priority right now — due ${formatZonedDate(task.dueDate, timezone)}.`
+  return `Highest priority right now — due ${formatZonedDateTime(task.dueDate, timezone)}.`
 }
 
 // The no-deadline decision has no urgency story to tell — it's weight
@@ -195,6 +195,9 @@ function describeRecommendation(task, recommendation, timezone, recommendationsL
     return `Start today by ${formatZonedTime(suggestedTime, timezone)} to finish on time.`
   }
   if (recommendedStart) {
+    // Date only (not formatZonedDateTime) — recommendedStart is always a
+    // day's midnight (see data/scheduleTasks.js), so a time here would
+    // just always read "12:00 AM".
     return `Start by ${formatZonedDate(recommendedStart, timezone)} to finish on time.`
   }
   return 'No recommendation available.'

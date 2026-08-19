@@ -90,6 +90,18 @@ export function formatZonedTime(isoString, timeZone) {
   })
 }
 
+// Human date + time (e.g. "August 23, 2026 at 2:30 PM"), in `timeZone`.
+// For displaying an actual due date/time (task.dueDate) — a due date is
+// a specific instant, not just a day, so showing only the date (as
+// formatZonedDate does) hides real information a user needs (e.g. "due
+// today" doesn't say whether that means 9am or 11:59pm). Not used for
+// scheduler-computed values like recommendedStart, which are always a
+// day's midnight in this codebase (see data/scheduleTasks.js) — adding
+// a time to those would just show a meaningless "12:00 AM" every time.
+export function formatZonedDateTime(isoString, timeZone) {
+  return `${formatZonedDate(isoString, timeZone)} at ${formatZonedTime(isoString, timeZone)}`
+}
+
 // "YYYY-MM-DD" for `date`'s calendar day in `timeZone` — a day-bucketing
 // key that's actually consistent with that timezone, unlike using UTC
 // date components (which puts evening-UTC instants on the "wrong" local
