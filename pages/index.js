@@ -13,11 +13,13 @@ import Head from 'next/head'
 import Link from 'next/link'
 import FocusQueue from '../components/shared/FocusQueue'
 import RequireAuth from '../components/shared/RequireAuth'
+import { TimerIcon, BoltIcon, PhoneIcon } from '../components/shared/icons'
 import styles from '../styles/home.module.css'
 
 const FEATURES = [
   {
     href: '/focus',
+    Icon: TimerIcon,
     title: 'Focus Timer + Task Weighting',
     description:
       "Score a task by effort and priority the moment you add it, then work through it with a timer — a classic Pomodoro rhythm, or Adaptive mode, which learns how long tasks like this one actually take you and nudges you accordingly instead of guessing.",
@@ -25,6 +27,7 @@ const FEATURES = [
   },
   {
     href: '/smart-start',
+    Icon: BoltIcon,
     title: 'Smart Start',
     description:
       "No list to scroll, no decision to make. NextUp looks at what's due, what's overdue, and what's heaviest, and hands you exactly one task to start right now — plus a second pick for anything with no deadline at all.",
@@ -32,6 +35,7 @@ const FEATURES = [
   },
   {
     href: '/phone-tracker',
+    Icon: PhoneIcon,
     title: 'Phone Tracker',
     description:
       'Log how much time you spend on your phone each day and see it laid out next to how many tasks you actually finished — a plain look at the relationship, not a lecture about it.',
@@ -46,8 +50,11 @@ export default function Home() {
         <title>NextUp</title>
       </Head>
       <main className={styles.main}>
-        <h1>NextUp</h1>
-        <p className={styles.tagline}>One task at a time — decided for you.</p>
+        <div className={styles.hero}>
+          <span className={styles.eyebrow}>For anyone who reaches for their phone instead of deciding</span>
+          <h1>NextUp</h1>
+          <p className={styles.tagline}>One task at a time — decided for you.</p>
+        </div>
 
         <section className={styles.about}>
           <h2 className={styles.aboutTitle}>Why NextUp</h2>
@@ -77,6 +84,9 @@ export default function Home() {
         <section className={styles.featureGrid}>
           {FEATURES.map((feature) => (
             <Link key={feature.href} href={feature.href} className={styles.featureCard}>
+              <span className={styles.featureIcon}>
+                <feature.Icon />
+              </span>
               <h3 className={styles.featureTitle}>{feature.title}</h3>
               <p className={styles.featureDescription}>{feature.description}</p>
               <span className={styles.featureCta}>{feature.cta} →</span>

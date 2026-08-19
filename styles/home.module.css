@@ -12,6 +12,27 @@
   margin: 0;
 }
 
+/* Subtle gradient wash behind the hero block instead of an image — keeps
+   the page lightweight, and reuses the existing --accent-soft token so it
+   matches the badges/pills used elsewhere in the app. */
+.hero {
+  margin: -0.5rem -1rem 0;
+  padding: 1.5rem 1rem 1rem;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--accent-soft) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  padding: 0.3em 0.8em;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
 .tagline {
   margin: 0.35rem 0 0;
   color: var(--text-muted);
@@ -71,6 +92,18 @@
 .featureCard:hover {
   border-color: var(--accent);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.featureIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0.65rem;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 .featureTitle {
