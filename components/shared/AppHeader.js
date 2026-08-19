@@ -5,9 +5,9 @@
 // Added the "NextUp" brand mark here so the site's name is the one
 // constant, biggest-weight element visible on every single page, not
 // just something that happens to say "NextUp" on the homepage's <h1>.
-// Centered in the header bar (see .header's grid in
-// AppHeader.module.css) with the auth control pinned to the right in
-// its own .authSlot, so the two don't compete for the same spot.
+// Left-aligned against the right-aligned auth control instead of both
+// sharing one flex-end cluster, so the top of every page reads as two
+// distinct things instead of one centered blob.
 import Link from 'next/link'
 import AuthButton from './AuthButton'
 import styles from '../../styles/AppHeader.module.css'
