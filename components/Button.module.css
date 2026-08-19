@@ -12,6 +12,18 @@ button.btn {
   transition: all 0.2s ease;
 }
 
+/* Small tactile lift/press feedback — "all 0.2s ease" above already
+   animates the transform change, this just says what the end states
+   are. Applies to every variant since they all share the base .btn
+   class. */
+button.btn:hover {
+  transform: translateY(-1px);
+}
+
+button.btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
 /* Default (primary) — most actions: Save, Log, Show/Hide all tasks. */
 button.btn {
   background: var(--accent, #0076ff);

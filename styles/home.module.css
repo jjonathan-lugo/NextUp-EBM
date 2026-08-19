@@ -9,6 +9,7 @@
   max-width: 1080px;
   margin: 0 auto;
   color: var(--text);
+  animation: fadeInUp 0.5s ease both;
 }
 
 /* Caps line length for anything meant to be read as prose (hero copy,
@@ -118,12 +119,28 @@
   padding: var(--space);
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  animation: fadeInUp 0.5s ease both;
+}
+
+/* Staggered so the three cards reveal left-to-right instead of all
+   popping in at once — small delays, not a slow reveal. */
+.featureCard:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.featureCard:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.featureCard:nth-child(3) {
+  animation-delay: 0.25s;
 }
 
 .featureCard:hover {
   border-color: var(--accent);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
 }
 
 .featureIcon {

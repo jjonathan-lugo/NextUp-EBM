@@ -24,6 +24,7 @@
   max-width: 980px;
   margin: 0 auto;
   color: var(--text);
+  animation: fadeInUp 0.5s ease both;
 }
 
 /* Two content blocks (FocusTimer, WeightingForm) side by side once
@@ -98,6 +99,7 @@
   background: transparent;
   color: var(--text-muted);
   font-size: 0.9rem;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .modeToggle button[aria-pressed='true'] {
@@ -117,7 +119,10 @@
   color: var(--text);
 }
 
-/* Soft tinted callout, not an alarm — the nudge is meant to be gentle */
+/* Soft tinted callout, not an alarm — the nudge is meant to be gentle.
+   It only mounts once the diminishing-returns threshold is crossed
+   (see AdaptiveMode.js), so the fade-in doubles as a quiet "something
+   just appeared" cue instead of the callout just snapping into place. */
 .nudge {
   margin-top: 0.75rem;
   padding: 0.7rem 1rem;
@@ -125,6 +130,7 @@
   border-radius: 8px;
   color: var(--text);
   font-size: 0.95rem;
+  animation: fadeInUp 0.35s ease both;
 }
 
 /* --- Task Weighting --- */

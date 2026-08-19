@@ -378,7 +378,7 @@ export default function TaskPicker() {
           />
         </div>
       ) : (
-        <div className={styles.decisionCard}>
+        <div key={decidedTask.id} className={styles.decisionCard}>
           <UrgencyBadge task={decidedTask} recommendation={recommendations[decidedTask.id]} timezone={timezone} />
           <TaskCard task={decidedTask} showWeight />
           <p className={styles.reason}>
@@ -405,7 +405,7 @@ export default function TaskPicker() {
           />
         </div>
       ) : (
-        <div className={styles.decisionCard}>
+        <div key={decidedAnytimeTask.id} className={styles.decisionCard}>
           <span className={`${styles.badge} ${styles.badgeNeutral}`}>No deadline</span>
           <TaskCard task={decidedAnytimeTask} showWeight />
           <p className={styles.reason}>{describeAnytimeDecision(decidedAnytimeTask)}</p>

@@ -56,3 +56,34 @@ body {
   text-rendering: optimizeLegibility;
   hyphens: auto;
 }
+
+/* Shared entrance animation — each page's .main module uses this to fade
+   + rise in on load instead of just snapping into place, and a few
+   dynamic elements (a nudge appearing, a "why" callout updating, a
+   correlation summary loading in) reuse it too so new content doesn't
+   just pop in. Defined once here instead of per-module since @keyframes
+   can't be scoped by CSS Modules the way classes are. */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Respect "reduce motion" OS setting — everything above still works,
+   this just collapses every animation/transition to effectively
+   instant for anyone who's asked for that. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

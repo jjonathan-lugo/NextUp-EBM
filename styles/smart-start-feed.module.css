@@ -13,6 +13,7 @@
   margin: 0 auto;
   padding: 3rem 2rem 4rem;
   color: var(--text);
+  animation: fadeInUp 0.5s ease both;
 }
 
 .grid {
@@ -49,12 +50,17 @@
 }
 
 /* --- Decided task (both "Start This" and "No Deadline") --- */
+/* Animates in on every mount, which in practice means every time the
+   decided task changes (e.g. marking one done reveals the next) — a
+   little motion cue that something changed instead of the content just
+   swapping instantly. */
 .decisionCard {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: var(--space);
   margin-bottom: var(--space);
+  animation: fadeInUp 0.35s ease both;
 }
 
 /* Urgency status pill — colors match the tier that actually drives the

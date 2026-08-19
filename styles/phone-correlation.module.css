@@ -13,6 +13,7 @@
   margin: 0 auto;
   padding: 3rem 2rem 4rem;
   color: var(--text);
+  animation: fadeInUp 0.5s ease both;
 }
 
 .grid {
@@ -89,6 +90,7 @@
   border-radius: var(--radius);
   padding: var(--space);
   margin-top: 1rem;
+  animation: fadeInUp 0.4s ease both;
 }
 
 .correlationValue {
@@ -149,6 +151,9 @@
   height: 100%;
   background: var(--accent);
   border-radius: var(--radius-pill);
+  /* Matches the same treatment on focus-weighting's .weightFill — the
+     bar grows into place instead of snapping to its final width. */
+  transition: width 0.3s ease;
 }
 
 .explainer {
