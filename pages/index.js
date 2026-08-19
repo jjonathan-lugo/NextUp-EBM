@@ -4,6 +4,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import FocusQueue from '../components/shared/FocusQueue'
+import RequireAuth from '../components/shared/RequireAuth'
 import styles from '../styles/home.module.css'
 
 export default function Home() {
@@ -15,7 +16,9 @@ export default function Home() {
       <main className={styles.main}>
         <h1>NextUp</h1>
 
-        <FocusQueue />
+        <RequireAuth>
+          <FocusQueue />
+        </RequireAuth>
 
         <nav className={styles.nav}>
           <Link href="/focus">Focus Timer + Task Weighting</Link>

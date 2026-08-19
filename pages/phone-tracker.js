@@ -3,6 +3,7 @@
 
 import PhoneTimeLogger from '../components/phone-correlation/PhoneTimeLogger'
 import CorrelationChart from '../components/phone-correlation/CorrelationChart'
+import RequireAuth from '../components/shared/RequireAuth'
 import styles from '../styles/phone-correlation.module.css'
 
 export default function PhoneTracker() {
@@ -10,9 +11,11 @@ export default function PhoneTracker() {
     <main className={styles.main}>
       <h1>Phone Tracker</h1>
 
-      <PhoneTimeLogger />
+      <RequireAuth>
+        <PhoneTimeLogger />
 
-      <CorrelationChart />
+        <CorrelationChart />
+      </RequireAuth>
     </main>
   )
 }

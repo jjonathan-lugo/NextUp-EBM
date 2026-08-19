@@ -22,6 +22,7 @@
 import { getAllTasks } from '../../data/taskStore'
 import { scheduleTasks, getSameDayStartTime } from '../../data/scheduleTasks'
 import { isSameZonedDay } from '../../data/timezone'
+import { requireUser } from '../../data/supabaseServerClient'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -29,10 +30,15 @@ export default async function handler(req, res) {
     return res.status(405).end(`Method ${req.method} Not Allowed`)
   }
 
+  const auth = await requireUser(req)
+  if (!auth) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
   const { taskId, timezone } = req.body || {}
 
   try {
-    const allTasks = await getAllTasks()
+    const allTasks = await getAllTasks(auth.supabase)
     const now = new Date()
     const schedulable = allTasks.filter((task) => task.status !== 'done' && task.dueDate)
     const schedule = scheduleTasks(schedulable, { timezone: timezone || 'UTC', now })

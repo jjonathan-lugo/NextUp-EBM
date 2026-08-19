@@ -2,8 +2,10 @@
 // useFocusQueue.js (homepage) — both need the same batch call to
 // /api/start-time and the same taskId -> recommendation map shape, so
 // this exists once instead of twice.
+import { authFetch } from './authFetch'
+
 export async function fetchRecommendations(timezone) {
-  const response = await fetch('/api/start-time', {
+  const response = await authFetch('/api/start-time', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ timezone }),

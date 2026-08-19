@@ -8,6 +8,7 @@
 // sending.
 import { useState } from 'react'
 import Button from '../Button'
+import { authFetch } from '../../data/authFetch'
 import styles from '../../styles/phone-correlation.module.css'
 
 export default function PhoneTimeLogger() {
@@ -37,7 +38,7 @@ export default function PhoneTimeLogger() {
     }
 
     try {
-      const response = await fetch('/api/phone-time', {
+      const response = await authFetch('/api/phone-time', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

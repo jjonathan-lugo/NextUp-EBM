@@ -1,14 +1,16 @@
-// Postgres-backed task store via Supabase — replaces the earlier
-// in-memory stopgap now that a real database is connected. The `tasks`
-// table uses snake_case columns; the app's Task shape (data/models/Task.js)
-// is camelCase, so this file maps between the two in both directions.
-import { createClient } from '@supabase/supabase-js'
+// Postgres-backed task store via Supabase. The `tasks` table uses
+// snake_case columns; the app's Task shape (data/models/Task.js) is
+// camelCase, so this file maps between the two in both directions.
+//
+// Every function now takes a `supabase` client as its first argument
+// instead of importing a single module-level client built from the
+// service-role key. That client is built per-request from the calling
+// user's access token (see data/supabaseServerClient.js) so Row Level
+// Security actually applies — user_id defaults to auth.uid() on insert,
+// and RLS policies restrict select/update/delete to rows where
+// user_id = auth.uid(), enforced by Postgres itself rather than by this
+// file remembering to filter correctly.
 import { createTask } from './models/Task'
-
-// Server-only client — uses the secret key (not the public anon key)
-// since this file is only ever imported from pages/api/* route handlers,
-// which run server-side and never ship to the browser.
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY)
 
 function toTask(row) {
   if (!row) return null
@@ -42,7 +44,7 @@ function toRow(input) {
   return row
 }
 
-export async function getAllTasks() {
+export async function getAllTasks(supabase) {
   const { data, error } = await supabase
     .from('tasks')
     .select('*')
@@ -52,21 +54,21 @@ export async function getAllTasks() {
   return data.map(toTask)
 }
 
-export async function getTaskById(id) {
+export async function getTaskById(supabase, id) {
   const { data, error } = await supabase.from('tasks').select('*').eq('id', id).maybeSingle()
 
   if (error) throw error
   return toTask(data)
 }
 
-export async function addTask(input) {
+export async function addTask(supabase, input) {
   const { data, error } = await supabase.from('tasks').insert(toRow(input)).select().single()
 
   if (error) throw error
   return toTask(data)
 }
 
-export async function updateTask(id, updates) {
+export async function updateTask(supabase, id, updates) {
   const { data, error } = await supabase
     .from('tasks')
     .update({ ...toRow(updates), updated_at: new Date().toISOString() })
@@ -78,7 +80,7 @@ export async function updateTask(id, updates) {
   return toTask(data)
 }
 
-export async function deleteTask(id) {
+export async function deleteTask(supabase, id) {
   const { error, count } = await supabase.from('tasks').delete({ count: 'exact' }).eq('id', id)
 
   if (error) throw error

@@ -4,11 +4,21 @@
 // components/smart-start-feed/TaskPicker.js) has more than one or two
 // inputs to actually choose between.
 //
-// Usage (with `npm run dev` already running in another terminal):
-//   node scripts/seed-test-tasks.mjs
+// v2: now that auth exists, every task needs a real user_id — RLS
+// enforces this (see the user_id + RLS migration). This talks to
+// Supabase directly with the service-role key instead of going through
+// /api/tasks, since a standalone script has no browser session to pull
+// a bearer token from. Same trusted-server-side pattern the app itself
+// used before auth existed.
 //
-// Targets http://localhost:3000 by default; override with:
-//   BASE_URL=https://your-preview-url.vercel.app node scripts/seed-test-tasks.mjs
+// Requires SUPABASE_URL + SUPABASE_SECRET_KEY (already in .env.local)
+// and USER_ID — the Supabase auth user ID to attach these tasks to.
+// Find yours: sign in once via the app, then Supabase Dashboard →
+// Authentication → Users → copy your UUID.
+//
+// Usage (no dev server needs to be running — this writes to Supabase
+// directly):
+//   USER_ID=<your-uuid> node scripts/seed-test-tasks.mjs
 //
 // Due dates are computed relative to whenever you run this, not
 // hardcoded, so the overdue/due-today/due-later spread stays meaningful
@@ -16,14 +26,26 @@
 //
 // Also seeds a few tasks with NO due date, to exercise the "No Deadline
 // — Do This Next" section (weight-only ranking via rankByWeight in
-// data/rankTasks.js) — the original version of this script predated that
-// section and only covered the due-date decision.
+// data/rankTasks.js).
+import { createClient } from '@supabase/supabase-js'
+import { loadEnvLocal } from './loadEnv.mjs'
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'
+loadEnvLocal()
 
-// Mirrors hooks/useWeightCalculator.js exactly — the API doesn't compute
-// weight server-side, it's expected on the request body (see
-// pages/api/tasks/index.js), same as WeightingForm.js does.
+const USER_ID = process.env.USER_ID
+if (!USER_ID) {
+  console.error('Set USER_ID to the Supabase auth user ID to attach these tasks to.')
+  console.error(
+    'Find yours: sign in once via the app, then Supabase Dashboard → Authentication → Users.'
+  )
+  process.exit(1)
+}
+
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY)
+
+// Mirrors hooks/useWeightCalculator.js exactly — kept in sync manually
+// since this script talks to the database directly rather than through
+// pages/api/weighting.js.
 const PRIORITY_WEIGHT = 1.5
 const EFFORT_WEIGHT = 0.5
 function computeWeight(priority, effort) {
@@ -126,35 +148,35 @@ const TASKS = [
 ]
 
 async function seed() {
-  console.log(`Seeding ${TASKS.length} test tasks against ${BASE_URL} ...\n`)
+  console.log(`Seeding ${TASKS.length} test tasks for user ${USER_ID} ...\n`)
 
   for (const task of TASKS) {
     const weight = computeWeight(task.priority, task.effort)
-    const body = { ...task, weight }
 
-    try {
-      const response = await fetch(`${BASE_URL}/api/tasks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+    const { data, error } = await supabase
+      .from('tasks')
+      .insert({
+        title: task.title,
+        description: task.description,
+        effort: task.effort,
+        priority: task.priority,
+        weight,
+        due_date: task.dueDate,
+        user_id: USER_ID,
       })
+      .select()
+      .single()
 
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error(`✗ ${task.title} — ${response.status} ${errorText}`)
-        continue
-      }
-
-      const created = await response.json()
-      console.log(`✓ ${created.title} — weight ${weight}, due ${created.dueDate || 'no due date'}`)
-    } catch (error) {
-      console.error(`✗ ${task.title} — request failed:`, error.message)
-      console.error('  Is `npm run dev` running? Is BASE_URL correct?')
+    if (error) {
+      console.error(`✗ ${task.title} — ${error.message}`)
+      continue
     }
+
+    console.log(`✓ ${data.title} — weight ${weight}, due ${data.due_date || 'no due date'}`)
   }
 
   console.log('\nDone. Refresh Smart Start to see the new decision.')
-  console.log('To remove these again: node scripts/remove-seeded-test-tasks.mjs')
+  console.log('To remove these again: USER_ID=... node scripts/remove-seeded-test-tasks.mjs')
 }
 
 // Exported so remove-seeded-test-tasks.mjs can match on the exact same

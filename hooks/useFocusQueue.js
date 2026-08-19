@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { useTimezone } from './useTimezone'
 import { rankTasks } from '../data/rankTasks'
 import { fetchRecommendations } from '../data/fetchRecommendations'
+import { authFetch } from '../data/authFetch'
 
 const MAX_QUEUE_SIZE = 3
 
@@ -28,7 +29,7 @@ export function useFocusQueue() {
     async function loadQueue() {
       setLoading(true)
       try {
-        const response = await fetch('/api/tasks')
+        const response = await authFetch('/api/tasks')
         if (!response.ok) {
           throw new Error('Could not load tasks')
         }

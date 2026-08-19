@@ -1,16 +1,24 @@
 // Shared — coordinate before editing; backs the Task list used by all features.
 //
-// Backed by data/taskStore.js, which now talks to the real Supabase
-// (Postgres) database. Those calls are async, so this handler awaits them.
+// Backed by data/taskStore.js (Supabase/Postgres). Every request now
+// requires a valid Supabase session — see pages/api/tasks/index.js's
+// comment for why (Row Level Security via requireUser()).
 import { getTaskById, updateTask, deleteTask } from '../../../data/taskStore'
+import { requireUser } from '../../../data/supabaseServerClient'
 
 export default async function handler(req, res) {
   const { id } = req.query
 
+  const auth = await requireUser(req)
+  if (!auth) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  const { supabase } = auth
+
   switch (req.method) {
     case 'GET': {
       try {
-        const task = await getTaskById(id)
+        const task = await getTaskById(supabase, id)
         if (!task) return res.status(404).json({ error: 'Task not found' })
         return res.status(200).json(task)
       } catch (error) {
@@ -20,7 +28,7 @@ export default async function handler(req, res) {
     }
     case 'PUT': {
       try {
-        const task = await updateTask(id, req.body || {})
+        const task = await updateTask(supabase, id, req.body || {})
         if (!task) return res.status(404).json({ error: 'Task not found' })
         return res.status(200).json(task)
       } catch (error) {
@@ -30,7 +38,7 @@ export default async function handler(req, res) {
     }
     case 'DELETE': {
       try {
-        const deleted = await deleteTask(id)
+        const deleted = await deleteTask(supabase, id)
         if (!deleted) return res.status(404).json({ error: 'Task not found' })
         return res.status(204).end()
       } catch (error) {

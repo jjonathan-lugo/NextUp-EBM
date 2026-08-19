@@ -1,32 +1,38 @@
-// Undoes scripts/seed-test-tasks.mjs — fetches every real task and
+// Undoes scripts/seed-test-tasks.mjs — fetches that user's tasks and
 // deletes only the ones whose title exactly matches one this repo's
-// seed script creates, so it won't touch any task you added yourself
+// seed script creates, so it won't touch anything you added yourself
 // even if it happens to share a due date or weight with a seeded one.
 //
-// Usage (with `npm run dev` already running in another terminal):
-//   node scripts/remove-seeded-test-tasks.mjs
+// v2: talks to Supabase directly with the service-role key, same as
+// seed-test-tasks.mjs now does — see that file's comment for why.
 //
-// Same BASE_URL override as the seed script:
-//   BASE_URL=https://your-preview-url.vercel.app node scripts/remove-seeded-test-tasks.mjs
-
+// Usage:
+//   USER_ID=<your-uuid> node scripts/remove-seeded-test-tasks.mjs
+import { createClient } from '@supabase/supabase-js'
+import { loadEnvLocal } from './loadEnv.mjs'
 import { TASKS } from './seed-test-tasks.mjs'
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'
+loadEnvLocal()
+
+const USER_ID = process.env.USER_ID
+if (!USER_ID) {
+  console.error('Set USER_ID to the Supabase auth user ID whose seeded tasks should be removed.')
+  process.exit(1)
+}
+
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY)
 const SEEDED_TITLES = new Set(TASKS.map((task) => task.title))
 
 async function removeSeeded() {
-  console.log(`Looking for seeded test tasks at ${BASE_URL} ...\n`)
+  console.log(`Looking for seeded test tasks belonging to user ${USER_ID} ...\n`)
 
-  let allTasks
-  try {
-    const response = await fetch(`${BASE_URL}/api/tasks`)
-    if (!response.ok) {
-      throw new Error(`GET /api/tasks failed with ${response.status}`)
-    }
-    allTasks = await response.json()
-  } catch (error) {
+  const { data: allTasks, error } = await supabase
+    .from('tasks')
+    .select('id, title')
+    .eq('user_id', USER_ID)
+
+  if (error) {
     console.error('Could not fetch tasks:', error.message)
-    console.error('Is `npm run dev` running? Is BASE_URL correct?')
     return
   }
 
@@ -40,18 +46,14 @@ async function removeSeeded() {
   console.log(`Removing ${toDelete.length} seeded test task(s):\n`)
 
   for (const task of toDelete) {
-    try {
-      const response = await fetch(`${BASE_URL}/api/tasks/${task.id}`, {
-        method: 'DELETE',
-      })
-      if (!response.ok && response.status !== 204) {
-        console.error(`✗ ${task.title} — ${response.status}`)
-        continue
-      }
-      console.log(`✓ removed "${task.title}"`)
-    } catch (error) {
-      console.error(`✗ ${task.title} — request failed:`, error.message)
+    const { error: deleteError } = await supabase.from('tasks').delete().eq('id', task.id)
+
+    if (deleteError) {
+      console.error(`✗ ${task.title} — ${deleteError.message}`)
+      continue
     }
+
+    console.log(`✓ removed "${task.title}"`)
   }
 
   console.log('\nDone.')

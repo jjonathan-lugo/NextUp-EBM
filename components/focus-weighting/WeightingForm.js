@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useWeightCalculator } from '../../hooks/useWeightCalculator'
 import { useTimezone } from '../../hooks/useTimezone'
 import { zonedTimeToUtc } from '../../data/timezone'
+import { authFetch } from '../../data/authFetch'
 import TaskWeightBar from './TaskWeightBar'
 import Button from '../Button'
 import styles from '../../styles/focus-weighting.module.css'
@@ -36,7 +37,7 @@ export default function WeightingForm() {
     setMessage('')
 
     try {
-      const response = await fetch('/api/tasks', {
+      const response = await authFetch('/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

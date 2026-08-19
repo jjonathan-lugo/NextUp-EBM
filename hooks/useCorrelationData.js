@@ -31,6 +31,7 @@
 import { useEffect, useState } from 'react'
 import { useTimezone } from './useTimezone'
 import { zonedDayKey } from '../data/timezone'
+import { authFetch } from '../data/authFetch'
 
 export function useCorrelationData() {
   const { timezone } = useTimezone()
@@ -44,8 +45,8 @@ export function useCorrelationData() {
       setLoading(true)
       try {
         const [phoneResponse, tasksResponse] = await Promise.all([
-          fetch('/api/phone-time'),
-          fetch('/api/tasks'),
+          authFetch('/api/phone-time'),
+          authFetch('/api/tasks'),
         ])
 
         if (!phoneResponse.ok) {

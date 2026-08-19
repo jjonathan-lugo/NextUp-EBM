@@ -42,6 +42,7 @@ import { useTimezone } from '../../hooks/useTimezone'
 import { zonedTimeToUtc, utcToZonedDateTimeLocal, formatZonedDate, formatZonedTime, isSameZonedDay } from '../../data/timezone'
 import { rankTasks, rankByWeight } from '../../data/rankTasks'
 import { fetchRecommendations } from '../../data/fetchRecommendations'
+import { authFetch } from '../../data/authFetch'
 import styles from '../../styles/smart-start-feed.module.css'
 
 function EditTaskForm({ task, onCancel, onSaved }) {
@@ -67,7 +68,7 @@ function EditTaskForm({ task, onCancel, onSaved }) {
     setError('')
 
     try {
-      const response = await fetch(`/api/tasks/${task.id}`, {
+      const response = await authFetch(`/api/tasks/${task.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -248,7 +249,7 @@ export default function TaskPicker() {
   async function loadTasks() {
     setLoading(true)
     try {
-      const response = await fetch('/api/tasks')
+      const response = await authFetch('/api/tasks')
       if (!response.ok) {
         throw new Error('Could not load tasks')
       }
@@ -270,7 +271,7 @@ export default function TaskPicker() {
   async function handleMarkDone(taskId) {
     setActionError('')
     try {
-      const response = await fetch(`/api/tasks/${taskId}`, {
+      const response = await authFetch(`/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'done' }),
@@ -293,7 +294,7 @@ export default function TaskPicker() {
 
     setActionError('')
     try {
-      const response = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
+      const response = await authFetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
       if (!response.ok && response.status !== 204) {
         throw new Error('Failed to delete task')
       }
