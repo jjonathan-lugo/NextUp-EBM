@@ -1,8 +1,10 @@
 // Owner: Grace
 //
 // Previously just rendered all 3 hardcoded tips in a static list. Now
-// shows one random tip at a time from a bigger pool, plus a button to
-// draw another without reloading the page.
+// shows one random tip at a time from a bigger pool, drawn by clicking
+// the card itself (was a separate "Show another tip" Button below it —
+// see styles.tipStack in smart-start-feed.module.css for the card-pile
+// visual and why the card is now the whole control).
 //
 // The random pick happens in an effect, not directly in useState's
 // initializer, on purpose: this page is statically prerendered (see the
@@ -13,7 +15,6 @@
 // once mounted avoids that — same pattern as hooks/useTimezone.js.
 import { useEffect, useState } from 'react'
 import TipCard from './TipCard'
-import Button from '../Button'
 import styles from '../../styles/smart-start-feed.module.css'
 
 const TIPS = [
@@ -110,13 +111,30 @@ export default function ProductivityTipsFeed() {
     setTip((current) => pickRandomTip(current.id))
   }
 
+  // role="button" + tabIndex/onKeyDown make the card itself a real
+  // control for keyboard and screen-reader users, not just a clickable
+  // <div> that only works with a mouse.
+  function handleKeyDown(event) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      handleNewTip()
+    }
+  }
+
   return (
     <div>
       <h2 className={styles.sectionTitle}>Productivity Tips 💡</h2>
-      <TipCard tip={tip} />
-      <div className={styles.toggleRow}>
-        <Button onClick={handleNewTip}>Show another tip</Button>
+      <div
+        className={styles.tipStack}
+        role="button"
+        tabIndex={0}
+        onClick={handleNewTip}
+        onKeyDown={handleKeyDown}
+        aria-label="Show another productivity tip"
+      >
+        <TipCard key={tip.id} tip={tip} />
       </div>
+      <p className={styles.tipHint}>Tap the card for another tip</p>
     </div>
   )
 }
