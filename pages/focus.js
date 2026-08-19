@@ -21,10 +21,12 @@ function Focus() {
       </Head>
       <main className={styles.main}>
         <h1>Focus</h1>
-        <FocusTimer />
-        <RequireAuth>
-          <WeightingForm />
-        </RequireAuth>
+        <div className={styles.grid}>
+          <FocusTimer />
+          <RequireAuth>
+            <WeightingForm />
+          </RequireAuth>
+        </div>
       </main>
     </>
   )

@@ -5,11 +5,27 @@
    elimination, so the decided task gets a clear card + a highlighted
    "why" callout, while the full task list (a deliberate second-class
    view behind a toggle) stays visually quieter. */
+/* Was max-width: 640px — widened so the decided task and the tips feed
+   (see .grid below) can sit side by side on anything wider than a
+   tablet, instead of stacking into one narrow column. */
 .main {
-  max-width: 640px;
+  max-width: 980px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 3rem 2rem 4rem;
   color: var(--text);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space);
+  align-items: start;
+}
+
+@media (min-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 /* Page title tier — matches focus-weighting.module.css's .main h1 so all

@@ -1,9 +1,22 @@
 /* Shared — coordinate before editing */
+/* Was max-width: 640px, which on any normal desktop screen left huge
+   flat margins on either side of a single narrow centered column —
+   "empty space" rather than "used" space. Widened so the feature grid
+   below actually has room to lay out side by side instead of stacking
+   in that narrow strip; .textMeasure keeps prose readable within it. */
 .main {
-  padding: 2rem;
-  max-width: 640px;
+  padding: 3rem 2rem 4rem;
+  max-width: 1080px;
   margin: 0 auto;
   color: var(--text);
+}
+
+/* Caps line length for anything meant to be read as prose (hero copy,
+   the About section) so widening .main doesn't stretch paragraphs
+   edge-to-edge — it's what lets the grid sections use the extra width
+   while the text sections stay comfortable. */
+.textMeasure {
+  max-width: 640px;
 }
 
 /* This is the biggest text on the entire site, on purpose — the same
@@ -23,8 +36,8 @@
    the page lightweight, and reuses the existing --accent-soft token so it
    matches the badges/pills used elsewhere in the app. */
 .hero {
-  margin: -0.5rem -1rem 0;
-  padding: 1.5rem 1rem 1rem;
+  margin: -1rem -1rem 3rem;
+  padding: 2.5rem 1rem 1.5rem;
   border-radius: var(--radius);
   background: linear-gradient(180deg, var(--accent-soft) 0%, rgba(0, 0, 0, 0) 100%);
 }
@@ -48,7 +61,7 @@
 
 /* --- Why NextUp --- */
 .about {
-  margin: 1.75rem 0;
+  margin: 0 0 3rem;
 }
 
 /* Sits one tier below the hero and one tier above featureTitle/body, so
@@ -73,7 +86,7 @@
 
 /* --- Focus Queue (signed in) --- */
 .queueSection {
-  margin-bottom: 1.75rem;
+  margin-bottom: 3rem;
 }
 
 .queueLead {
@@ -83,10 +96,15 @@
 }
 
 /* --- Feature cards --- */
+/* A real grid instead of a forced single column — on a wide screen the
+   three cards now sit side by side and use the width .main just
+   gained, instead of stacking into one narrow strip with empty margins
+   on either side. minmax(260px, 1fr) is what lets it fall back to a
+   single column on narrow/mobile viewports without a media query. */
 .featureGrid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
 }
 
 .featureCard {

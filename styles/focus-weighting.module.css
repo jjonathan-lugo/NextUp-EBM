@@ -16,10 +16,29 @@
   --radius: 12px;
   --space: 1.25rem;
 
-  padding: 2rem;
-  max-width: 640px;
+  /* Was max-width: 640px — widened so Focus Timer and Task Weighting can
+     sit side by side (see .grid below) on anything wider than a tablet,
+     instead of stacking into one narrow column with empty margins on
+     either side of it. */
+  padding: 3rem 2rem 4rem;
+  max-width: 980px;
   margin: 0 auto;
   color: var(--text);
+}
+
+/* Two content blocks (FocusTimer, WeightingForm) side by side once
+   there's room; stacked below that, in source order. */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space);
+  align-items: start;
+}
+
+@media (min-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 /* Page title tier — below the homepage hero (home.module.css), above

@@ -17,10 +17,12 @@ function SmartStart() {
       </Head>
       <main className={styles.main}>
         <h1>Smart Start</h1>
-        <RequireAuth>
-          <TaskPicker />
-        </RequireAuth>
-        <ProductivityTipsFeed />
+        <div className={styles.grid}>
+          <RequireAuth>
+            <TaskPicker />
+          </RequireAuth>
+          <ProductivityTipsFeed />
+        </div>
       </main>
     </>
   )

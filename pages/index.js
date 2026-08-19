@@ -51,12 +51,14 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div className={styles.hero}>
-          <span className={styles.eyebrow}>For anyone who reaches for their phone instead of deciding</span>
-          <h1>NextUp</h1>
-          <p className={styles.tagline}>One task at a time — decided for you.</p>
+          <div className={styles.textMeasure}>
+            <span className={styles.eyebrow}>For anyone who reaches for their phone instead of deciding</span>
+            <h1>NextUp</h1>
+            <p className={styles.tagline}>One task at a time — decided for you.</p>
+          </div>
         </div>
 
-        <section className={styles.about}>
+        <section className={`${styles.about} ${styles.textMeasure}`}>
           <h2 className={styles.aboutTitle}>Why NextUp</h2>
           <p>
             Open a normal to-do list and you have to re-decide what matters every single
@@ -72,7 +74,7 @@ export default function Home() {
         </section>
 
         <RequireAuth>
-          <section className={styles.queueSection}>
+          <section className={`${styles.queueSection} ${styles.textMeasure}`}>
             <p className={styles.queueLead}>
               Your Focus Queue — the next few tasks NextUp has already picked for you, ranked
               by urgency and weight.

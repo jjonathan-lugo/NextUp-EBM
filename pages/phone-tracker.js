@@ -17,9 +17,10 @@ export default function PhoneTracker() {
         <h1>Phone Tracker</h1>
 
         <RequireAuth>
-          <PhoneTimeLogger />
-
-          <CorrelationChart />
+          <div className={styles.grid}>
+            <PhoneTimeLogger />
+            <CorrelationChart />
+          </div>
         </RequireAuth>
       </main>
     </>
