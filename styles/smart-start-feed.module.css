@@ -228,6 +228,7 @@
   position: relative;
   display: inline-block;
   width: 100%;
+  margin-bottom: var(--space);
   cursor: pointer;
 }
 
@@ -283,13 +284,6 @@
   box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
-.tipHint {
-  margin: 0.6rem 0 0;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  font-style: italic;
-}
-
 .tipCard {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -302,6 +296,22 @@
   animation: fadeInUp 0.3s ease both;
 }
 
+/* Gold/amber rather than the site's usual accent blue — a star badge
+   reads as "this is a highlight/hint" specifically, and using a
+   different hue than every other icon on the site (all --accent) keeps
+   it from being mistaken for a link or a primary action. */
+.tipIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 0.6rem;
+  border-radius: 50%;
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
 .tipCard h3 {
   margin: 0 0 0.5rem;
   font-size: 1rem;
@@ -312,4 +322,36 @@
   margin: 0;
   color: var(--text-muted);
   font-size: 0.95rem;
+}
+
+/* --- Stub sections (Weekly Reflection, Focus Streak) --- */
+/* Dashed border instead of tipCard/decisionCard's solid one — a
+   deliberate visual signal that this is scaffolding, not a finished
+   feature, so it doesn't read as broken or unstyled. */
+.stubCard {
+  background: var(--surface-muted);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: var(--space);
+  margin-bottom: var(--space);
+}
+
+.stubBadge {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  padding: 0.15em 0.6em;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stubCard p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }

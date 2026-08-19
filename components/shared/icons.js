@@ -49,3 +49,23 @@ export function PhoneIcon(props) {
     </IconBase>
   )
 }
+
+// Filled, not outlined — doesn't use IconBase (which defaults to
+// fill="none") since a solid star reads as a highlight/badge, closer
+// to what it's marking (TipCard's "this is a hint" flag) than a plain
+// line icon would.
+export function StarIcon(props) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="currentColor"
+      stroke="none"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.27l-5.8 3.09 1.11-6.46-4.7-4.58 6.49-.94L12 2.5z" />
+    </svg>
+  )
+}
