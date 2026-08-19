@@ -41,3 +41,29 @@
   font-size: 0.85rem;
   color: var(--text-muted);
 }
+
+/* Weight badge — colored by intensity on the accent hue (see
+   components/shared/TaskCard.js's weightTier), not red/green, since a
+   high weight just means "important and/or effortful", not "bad". */
+.weightBadge {
+  display: inline-block;
+  padding: 0.1em 0.55em;
+  border-radius: var(--radius-pill, 999px);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.weightLow {
+  background: var(--surface-muted);
+  color: var(--text-muted);
+}
+
+.weightMid {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.weightHigh {
+  background: var(--accent);
+  color: #fff;
+}

@@ -13,6 +13,18 @@ function formatDuration(totalSeconds) {
   return `${minutes}:${String(seconds).padStart(2, '0')}`
 }
 
+// Weight (see data/weightFormula.js) ranges 2-10. Colors it by intensity
+// on the accent hue rather than a red/green scale — a high weight isn't
+// "bad", so it shouldn't borrow the danger/success colors that Smart
+// Start's urgency badges use for status. Thresholds split the 2-10
+// range roughly into thirds.
+function weightTier(weight) {
+  if (typeof weight !== 'number') return 'weightLow'
+  if (weight >= 7.5) return 'weightHigh'
+  if (weight >= 5) return 'weightMid'
+  return 'weightLow'
+}
+
 export default function TaskCard({
   task,
   onSelect,
@@ -29,7 +41,14 @@ export default function TaskCard({
       <h3 className={styles.title}>{task.title}</h3>
       {task.description && <p className={styles.description}>{task.description}</p>}
 
-      {showWeight && <p className={styles.meta}>Weight: {task.weight ?? '—'}</p>}
+      {showWeight && (
+        <p className={styles.meta}>
+          Weight:{' '}
+          <span className={`${styles.weightBadge} ${styles[weightTier(task.weight)]}`}>
+            {task.weight ?? '—'}
+          </span>
+        </p>
+      )}
       {showTimer && (
         <p className={styles.meta}>Time spent: {formatDuration(task.timeSpentSeconds ?? 0)}</p>
       )}

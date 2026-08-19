@@ -2,31 +2,71 @@ button.btn {
   margin: 0;
   border: 1px solid #d1d1d1;
   border-radius: 5px;
-  padding: 0.5em;
+  padding: 0.65em 1em;
   vertical-align: middle;
   white-space: normal;
-  background: none;
   line-height: 1;
   font-size: 1rem;
   font-family: inherit;
-  transition: all 0.2s ease;
-}
-
-button.btn {
-  padding: 0.65em 1em;
-  background: #0076ff;
-  color: #fff;
-  border: none;
   cursor: pointer;
   transition: all 0.2s ease;
 }
-button.btn:focus {
-  outline: 0;
-  border-color: #0076ff;
+
+/* Default (primary) — most actions: Save, Log, Show/Hide all tasks. */
+button.btn {
+  background: var(--accent, #0076ff);
+  color: #fff;
+  border: none;
 }
 button.btn:hover {
   background: rgba(0, 118, 255, 0.8);
 }
 button.btn:focus {
+  outline: 0;
   box-shadow: 0 0 0 2px rgba(0, 118, 255, 0.5);
+}
+
+/* Ghost — low-emphasis actions that shouldn't compete with the primary
+   action in the same row: Edit, Cancel. */
+button.ghost {
+  background: var(--surface, #fff);
+  color: var(--text, #1a1a1a);
+  border: 1px solid var(--border, #d1d1d1);
+}
+button.ghost:hover {
+  background: var(--surface-muted, #f5f6f8);
+}
+button.ghost:focus {
+  outline: 0;
+  box-shadow: 0 0 0 2px var(--accent-soft, rgba(0, 118, 255, 0.25));
+}
+
+/* Success — positive/completing actions: Mark done. */
+button.success {
+  background: var(--success, #1a8a5f);
+  color: #fff;
+  border: none;
+}
+button.success:hover {
+  opacity: 0.85;
+}
+button.success:focus {
+  outline: 0;
+  box-shadow: 0 0 0 2px var(--success-soft, rgba(26, 138, 95, 0.3));
+}
+
+/* Danger — destructive/irreversible actions: Delete. Distinct color so
+   it doesn't blend in next to Edit/Mark done and get clicked by
+   accident. */
+button.danger {
+  background: var(--surface, #fff);
+  color: var(--danger, #d64545);
+  border: 1px solid var(--danger, #d64545);
+}
+button.danger:hover {
+  background: var(--danger-soft, rgba(214, 69, 69, 0.12));
+}
+button.danger:focus {
+  outline: 0;
+  box-shadow: 0 0 0 2px var(--danger-soft, rgba(214, 69, 69, 0.3));
 }

@@ -79,6 +79,26 @@
   font-weight: 600;
 }
 
+/* Sign (positive/negative) picks the hue, strength picks how solid it
+   reads — accent (blue) for positive, inverse (violet) for negative.
+   Not red/green: see CorrelationChart.js's correlationColorClass for
+   why neither direction is treated as "good" or "bad". */
+.correlationPositiveSolid {
+  color: var(--accent);
+}
+
+.correlationPositiveSoft {
+  color: var(--text-muted);
+}
+
+.correlationNegativeSolid {
+  color: var(--inverse);
+}
+
+.correlationNegativeSoft {
+  color: var(--text-muted);
+}
+
 .dayList {
   display: grid;
   gap: 0.6rem;
@@ -94,6 +114,23 @@
 
 .dayLabel {
   font-weight: 600;
+}
+
+/* Relative phone-time bar per day — width set inline in
+   CorrelationChart.js (data-driven, can't be a static class), scaled
+   against the busiest day in the current data set. */
+.phoneBarTrack {
+  margin: 0.4rem 0 0.5rem;
+  height: 6px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.phoneBarFill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
 }
 
 .explainer {

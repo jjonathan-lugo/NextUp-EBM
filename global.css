@@ -17,6 +17,25 @@
   --radius: 12px;
   --radius-pill: 999px;
   --space: 1.25rem;
+
+  /* Semantic colors — added for urgency/status signaling (Smart Start's
+     overdue/due-today badges, Focus Queue's weight badges) and for
+     giving buttons distinct meanings (Mark done vs. Delete vs. Edit)
+     instead of every action using the same blue. Kept separate from
+     --accent, which stays reserved for primary/neutral actions and
+     links so it doesn't compete with these for attention. */
+  --danger: #d64545;
+  --danger-soft: rgba(214, 69, 69, 0.12);
+  --warning: #b9770e;
+  --warning-soft: rgba(217, 145, 5, 0.14);
+  --success: #1a8a5f;
+  --success-soft: rgba(26, 138, 95, 0.12);
+  /* Used only for phone-tracker's "negative correlation" case — kept
+     visually distinct from --danger since an inverse relationship
+     between phone time and completed tasks isn't inherently bad, just
+     different, and shouldn't read as an error/warning. */
+  --inverse: #7c5cbf;
+  --inverse-soft: rgba(124, 92, 191, 0.12);
 }
 
 body {

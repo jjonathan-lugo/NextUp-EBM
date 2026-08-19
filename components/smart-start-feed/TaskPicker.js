@@ -40,7 +40,7 @@ import TaskCard from '../shared/TaskCard'
 import Button from '../Button'
 import { useTimezone } from '../../hooks/useTimezone'
 import { zonedTimeToUtc, utcToZonedDateTimeLocal, formatZonedDate, formatZonedTime, isSameZonedDay } from '../../data/timezone'
-import { rankTasks, rankByWeight } from '../../data/rankTasks'
+import { rankTasks, rankByWeight, urgencyTier, URGENCY } from '../../data/rankTasks'
 import { fetchRecommendations } from '../../data/fetchRecommendations'
 import { authFetch } from '../../data/authFetch'
 import styles from '../../styles/smart-start-feed.module.css'
@@ -139,7 +139,7 @@ function EditTaskForm({ task, onCancel, onSaved }) {
         <Button onClick={handleSave} disabled={saving}>
           {saving ? 'Saving…' : 'Save'}
         </Button>
-        <Button onClick={onCancel}>Cancel</Button>
+        <Button variant="ghost" onClick={onCancel}>Cancel</Button>
       </div>
       {error && <p className={styles.errorText}>{error}</p>}
     </div>
@@ -198,6 +198,25 @@ function describeRecommendation(task, recommendation, timezone, recommendationsL
     return `Start by ${formatZonedDate(recommendedStart, timezone)} to finish on time.`
   }
   return 'No recommendation available.'
+}
+
+// Small colored status pill, reusing the same urgency tiers the ranking
+// itself is built on (data/rankTasks.js) so the badge can never disagree
+// with why a task was actually picked. Tasks with no due date don't get
+// one here — they're already labeled by the "No Deadline" section they
+// live in.
+function UrgencyBadge({ task, recommendation, timezone }) {
+  if (!task.dueDate) return null
+
+  const tier = urgencyTier(task, recommendation, new Date().toISOString(), timezone)
+  const badge = {
+    [URGENCY.OVERDUE]: { label: 'Overdue', className: styles.badgeDanger },
+    [URGENCY.DUE_TODAY]: { label: 'Due today', className: styles.badgeWarning },
+    [URGENCY.NEEDS_TODAY]: { label: 'Start today', className: styles.badgeWarningSoft },
+    [URGENCY.LATER]: { label: 'On track', className: styles.badgeNeutral },
+  }[tier]
+
+  return <span className={`${styles.badge} ${badge.className}`}>{badge.label}</span>
 }
 
 export default function TaskPicker() {
@@ -345,14 +364,15 @@ export default function TaskPicker() {
         </div>
       ) : (
         <div className={styles.decisionCard}>
+          <UrgencyBadge task={decidedTask} recommendation={recommendations[decidedTask.id]} timezone={timezone} />
           <TaskCard task={decidedTask} showWeight />
           <p className={styles.reason}>
             {describeDecision(decidedTask, recommendations[decidedTask.id], timezone)}
           </p>
           <div className={styles.actions}>
-            <Button onClick={() => setEditingId(decidedTask.id)}>Edit</Button>
-            <Button onClick={() => handleMarkDone(decidedTask.id)}>Mark done</Button>
-            <Button onClick={() => handleDelete(decidedTask.id)}>Delete</Button>
+            <Button variant="ghost" onClick={() => setEditingId(decidedTask.id)}>Edit</Button>
+            <Button variant="success" onClick={() => handleMarkDone(decidedTask.id)}>Mark done</Button>
+            <Button variant="danger" onClick={() => handleDelete(decidedTask.id)}>Delete</Button>
           </div>
         </div>
       )}
@@ -371,18 +391,19 @@ export default function TaskPicker() {
         </div>
       ) : (
         <div className={styles.decisionCard}>
+          <span className={`${styles.badge} ${styles.badgeNeutral}`}>No deadline</span>
           <TaskCard task={decidedAnytimeTask} showWeight />
           <p className={styles.reason}>{describeAnytimeDecision(decidedAnytimeTask)}</p>
           <div className={styles.actions}>
-            <Button onClick={() => setEditingId(decidedAnytimeTask.id)}>Edit</Button>
-            <Button onClick={() => handleMarkDone(decidedAnytimeTask.id)}>Mark done</Button>
-            <Button onClick={() => handleDelete(decidedAnytimeTask.id)}>Delete</Button>
+            <Button variant="ghost" onClick={() => setEditingId(decidedAnytimeTask.id)}>Edit</Button>
+            <Button variant="success" onClick={() => handleMarkDone(decidedAnytimeTask.id)}>Mark done</Button>
+            <Button variant="danger" onClick={() => handleDelete(decidedAnytimeTask.id)}>Delete</Button>
           </div>
         </div>
       )}
 
       <div className={styles.toggleRow}>
-        <Button onClick={() => setShowAll((value) => !value)}>
+        <Button variant="ghost" onClick={() => setShowAll((value) => !value)}>
           {showAll ? 'Hide' : 'Show'} all tasks
         </Button>
       </div>
@@ -400,6 +421,9 @@ export default function TaskPicker() {
               </li>
             ) : (
               <li key={task.id} className={styles.taskRow}>
+                {task.status !== 'done' && (
+                  <UrgencyBadge task={task} recommendation={recommendations[task.id]} timezone={timezone} />
+                )}
                 <span
                   className={
                     task.status === 'done'
@@ -416,11 +440,11 @@ export default function TaskPicker() {
                   {describeRecommendation(task, recommendations[task.id], timezone, recommendationsLoading)}
                 </span>
                 <div className={styles.taskActions}>
-                  <Button onClick={() => setEditingId(task.id)}>Edit</Button>
+                  <Button variant="ghost" onClick={() => setEditingId(task.id)}>Edit</Button>
                   {task.status !== 'done' && (
-                    <Button onClick={() => handleMarkDone(task.id)}>Mark done</Button>
+                    <Button variant="success" onClick={() => handleMarkDone(task.id)}>Mark done</Button>
                   )}
-                  <Button onClick={() => handleDelete(task.id)}>Delete</Button>
+                  <Button variant="danger" onClick={() => handleDelete(task.id)}>Delete</Button>
                 </div>
               </li>
             )

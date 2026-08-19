@@ -93,6 +93,17 @@ export function getStrength(correlation) {
   return 'Strong'
 }
 
+// --accent (blue) for a positive correlation, --inverse (violet) for a
+// negative one — deliberately NOT red/green, since neither direction is
+// "good" or "bad" on its own (see the disclaimer in the render below).
+// Strength only controls whether the soft or solid version is used, so
+// a strong correlation reads as more visually confident than a weak one.
+function correlationColorClass(correlation, strength) {
+  const sign = correlation >= 0 ? 'Positive' : 'Negative'
+  const solid = strength === 'Strong' || strength === 'Moderate'
+  return `correlation${sign}${solid ? 'Solid' : 'Soft'}`
+}
+
 export default function CorrelationChart() {
   const { data, loading } =
     useCorrelationData()
@@ -125,19 +136,22 @@ export default function CorrelationChart() {
   const strength =
     getStrength(correlation)
 
+  const colorClass = correlationColorClass(correlation, strength)
+  const maxPhoneMinutes = Math.max(...data.map((item) => item.phoneMinutes), 1)
+
   return (
     <section className={styles.card}>
       <h2>Phone Time vs. Productivity</h2>
 
       <div className={styles.summary}>
-        <h3 className={styles.correlationValue}>
+        <h3 className={`${styles.correlationValue} ${styles[colorClass]}`}>
           Correlation:{' '}
           {correlation.toFixed(2)}
         </h3>
 
         <p>
           Relationship strength:{' '}
-          <strong>{strength}</strong>
+          <strong className={styles[colorClass]}>{strength}</strong>
         </p>
 
         <div className={styles.dayList}>
@@ -147,6 +161,16 @@ export default function CorrelationChart() {
               className={styles.dayRow}
             >
               <div className={styles.dayLabel}>{item.date}</div>
+
+              {/* Relative phone-time bar — width scaled against this
+                  data set's own busiest day, so it's a comparison across
+                  the days shown, not an absolute scale. */}
+              <div className={styles.phoneBarTrack}>
+                <div
+                  className={styles.phoneBarFill}
+                  style={{ width: `${(item.phoneMinutes / maxPhoneMinutes) * 100}%` }}
+                />
+              </div>
 
               <div>
                 Phone time:{' '}

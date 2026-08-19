@@ -37,6 +37,41 @@
   margin-bottom: var(--space);
 }
 
+/* Urgency status pill — colors match the tier that actually drives the
+   decision (data/rankTasks.js's URGENCY), so the badge can't say
+   something different from the ranking logic underneath it. */
+.badge {
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  padding: 0.2em 0.7em;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badgeDanger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.badgeWarning {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+/* Same "needs attention soon" family as badgeWarning but visually
+   quieter — NEEDS_TODAY is a softer signal than an actual due-today
+   deadline (see urgencyTier in data/rankTasks.js). */
+.badgeWarningSoft {
+  background: var(--surface-muted);
+  color: var(--warning);
+}
+
+.badgeNeutral {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
 /* The "why" line — same soft-callout treatment as focus-weighting's
    nudge, since both are gentle explanations rather than alerts. */
 .reason {
