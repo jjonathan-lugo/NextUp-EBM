@@ -13,9 +13,12 @@ export const URGENCY = {
   OVERDUE: 0,
   DUE_TODAY: 1,
   // Due later, but the day-budget scheduler (data/scheduleTasks.js) says
-  // the work has to start today to still finish on time — a task due in
-  // 3 days but effortful enough that today's slice of the daily budget
-  // is already spoken for.
+  // today is when this needs attention — either the daily budget is
+  // already spoken for further out (an effortful task competing with
+  // others), or the task's own advance-notice floor (MIN_LEAD_DAYS —
+  // e.g. an effort-5 "study for exams" task gets a week's notice) lands
+  // on today, even if the raw minute math alone wouldn't require
+  // starting until later.
   NEEDS_TODAY: 2,
   // Also covers tasks with no due date at all — no urgency signal to go
   // on, so they fall back to weight-only comparison like everything else

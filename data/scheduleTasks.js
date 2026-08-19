@@ -35,6 +35,29 @@ function estimatedMinutes(effort) {
   return EFFORT_TO_MINUTES[clamped]
 }
 
+// Minimum advance notice per effort level — independent from the
+// minute-budget math above. That math answers "how many days of actual
+// work does this need", which for a lot of effortful-but-not-huge tasks
+// still fits in a day or two right before the due date. But something
+// like studying for an exam (effort 5, "a major undertaking" per
+// WeightingForm's hint text) benefits from being flagged with real lead
+// time — a week's notice — even if the actual working time could
+// technically be crammed into the day before. Scales with effort so a
+// quick task (effort 1) isn't artificially pushed earlier than it needs
+// to be.
+const MIN_LEAD_DAYS = {
+  1: 0,
+  2: 1,
+  3: 3,
+  4: 5,
+  5: 7,
+}
+
+function minLeadDays(effort) {
+  const clamped = Math.max(1, Math.min(5, effort))
+  return MIN_LEAD_DAYS[clamped]
+}
+
 // tasks: array of { id, dueDate, effort } — caller is expected to have
 // already filtered to non-done tasks with a real dueDate.
 // timezone: IANA name to bucket days by; defaults to UTC if not given.
@@ -88,6 +111,27 @@ export function scheduleTasks(tasks, { timezone = 'UTC', now = new Date() } = {}
           break
         }
       }
+    }
+
+    // Advance-notice floor: never recommend starting later than
+    // (due date - minLeadDays), regardless of what the minute-budget
+    // walk-back above landed on. Takes whichever is earlier (more lead
+    // time) of the two — a task that's already being pushed back further
+    // by daily-budget contention with other tasks keeps that earlier
+    // date; one that would otherwise land close to its due date gets
+    // pulled back to the notice floor instead.
+    const noticeFloor = addZonedDays(
+      startOfZonedDay(task.dueDate, timezone),
+      -minLeadDays(task.effort),
+      timezone
+    )
+    if (noticeFloor < recommendedStart) {
+      recommendedStart = noticeFloor
+    }
+    // Still can't recommend starting in the past — same reasoning as the
+    // overdue clamp above.
+    if (recommendedStart < today) {
+      recommendedStart = today
     }
 
     results.set(task.id, recommendedStart.toISOString())
