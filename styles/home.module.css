@@ -34,6 +34,15 @@
 
 .hero {
   margin-bottom: 3rem;
+  text-align: center;
+}
+
+/* Centers the hero's inner text block itself (not just the text within
+   it) — .textMeasure elsewhere (About, Focus Queue) stays left-aligned
+   at the edge of .main, this scoped override is what makes only the
+   hero's copy sit centered in the middle of the page. */
+.hero .textMeasure {
+  margin: 0 auto;
 }
 
 .eyebrow {
