@@ -12,14 +12,18 @@
 //   shared by client (hooks/useWeightCalculator.js) and server
 //   (pages/api/weighting.js).
 //   Due-date urgency is handled separately (data/rankTasks.js), not
-//   folded into this number. Remaining open item: a planning-fallacy
-//   stretch goal where effort estimates self-correct over time based on
-//   actual timeSpentSeconds vs. the original effort score — not
-//   implemented.
+//   folded into this number. Still an open stretch goal: this number
+//   itself doesn't self-correct based on actual timeSpentSeconds vs. the
+//   original effort score — see hooks/useWeightCalculator.js's comment.
+//   A narrower, related idea IS implemented though: Focus Timer's
+//   Adaptive mode (data/adaptiveThreshold.js) personalizes its own
+//   break-nudge timing from this same timeSpentSeconds history, without
+//   feeding back into effort/weight.
 // @property {string} dueDate - ISO date string
 // @property {string} [recommendedStart] - ISO date string, set by Smart Start feature (G)
 // @property {'todo'|'in_progress'|'done'} status
-// @property {number} timeSpentSeconds - logged via Focus Timer (J)
+// @property {number} timeSpentSeconds - logged via Focus Timer (J); also
+//   read back by data/adaptiveThreshold.js to personalize Adaptive mode
 // @property {string} createdAt
 // @property {string} updatedAt
 

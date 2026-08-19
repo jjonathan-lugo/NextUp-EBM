@@ -44,7 +44,11 @@ export default function FocusTimer() {
           throw new Error('Could not load tasks')
         }
         const data = await response.json()
-        if (!cancelled) setTasks(data.filter((task) => task.status !== 'done'))
+        // Unlike before, this keeps done tasks too — AdaptiveMode needs
+        // the user's completed-task history (with logged timeSpentSeconds)
+        // to personalize its nudge threshold. The task PICKER below still
+        // only offers non-done tasks; see `openTasks`.
+        if (!cancelled) setTasks(data)
       } catch (error) {
         console.error('Failed to load tasks for Focus Timer:', error)
         if (!cancelled) setTasks([])
@@ -60,7 +64,8 @@ export default function FocusTimer() {
     }
   }, [user])
 
-  const selectedTask = tasks.find((task) => task.id === selectedTaskId) || null
+  const openTasks = tasks.filter((task) => task.status !== 'done')
+  const selectedTask = openTasks.find((task) => task.id === selectedTaskId) || null
 
   // Adds however much of `seconds` hasn't been saved yet onto the
   // selected task's timeSpentSeconds. Fire-and-forget from the caller's
@@ -131,7 +136,7 @@ export default function FocusTimer() {
           ) : (
             <select value={selectedTaskId} onChange={(e) => handleSelectTask(e.target.value)}>
               <option value="">No task selected</option>
-              {tasks.map((task) => (
+              {openTasks.map((task) => (
                 <option key={task.id} value={task.id}>
                   {task.title} (effort {task.effort})
                 </option>
@@ -176,6 +181,7 @@ export default function FocusTimer() {
             seconds={seconds}
             effort={selectedTask?.effort ?? 1}
             taskTitle={selectedTask?.title ?? ''}
+            historicalTasks={tasks}
           />
         )}
       </div>

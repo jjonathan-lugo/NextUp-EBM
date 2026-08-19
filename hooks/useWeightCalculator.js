@@ -12,9 +12,15 @@ export function useWeightCalculator() {
   const [weight, setWeight] = useState(null)
 
   const calculate = useCallback(({ effort, priority }) => {
-    // TODO(J): planning-fallacy stretch goal — let effort estimates
-    // self-correct over time using timeSpentSeconds vs. the original
-    // effort score. Not implemented here.
+    // Still no self-correction HERE — the effort score fed into the
+    // weight formula stays exactly what the user typed. A related,
+    // narrower version of the planning-fallacy idea now exists in
+    // data/adaptiveThreshold.js: Focus Timer's Adaptive mode personalizes
+    // its break-nudge threshold from actual timeSpentSeconds history, but
+    // deliberately doesn't feed back into the effort score or weight
+    // itself — see that file's comment for why. Actually adjusting the
+    // effort number a task is scored at (not just the nudge timing) is
+    // still an open stretch goal.
     const result = computeWeight(priority, effort)
     setWeight(result)
     return result
