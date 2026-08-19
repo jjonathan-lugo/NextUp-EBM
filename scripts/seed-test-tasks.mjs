@@ -11,37 +11,50 @@
 // a bearer token from. Same trusted-server-side pattern the app itself
 // used before auth existed.
 //
+// v3: identify the user by EMAIL (looked up via the Supabase admin
+// API) as an alternative to USER_ID. Also moved the actual TASKS data
+// out to seedTaskData.mjs (no side effects) so
+// remove-seeded-test-tasks.mjs can import just the data without also
+// triggering this file's env checks — see that module's comment.
+//
 // Requires SUPABASE_URL + SUPABASE_SECRET_KEY (already in .env.local)
-// and USER_ID — the Supabase auth user ID to attach these tasks to.
-// Find yours: sign in once via the app, then Supabase Dashboard →
-// Authentication → Users → copy your UUID.
+// and EMAIL or USER_ID to identify who these tasks belong to.
 //
 // Usage (no dev server needs to be running — this writes to Supabase
 // directly):
+//   EMAIL=you@example.com node scripts/seed-test-tasks.mjs
 //   USER_ID=<your-uuid> node scripts/seed-test-tasks.mjs
-//
-// Due dates are computed relative to whenever you run this, not
-// hardcoded, so the overdue/due-today/due-later spread stays meaningful
-// no matter when you run it.
-//
-// Also seeds a few tasks with NO due date, to exercise the "No Deadline
-// — Do This Next" section (weight-only ranking via rankByWeight in
-// data/rankTasks.js).
 import { createClient } from '@supabase/supabase-js'
 import { loadEnvLocal } from './loadEnv.mjs'
+import { TASKS } from './seedTaskData.mjs'
 
 loadEnvLocal()
 
-const USER_ID = process.env.USER_ID
-if (!USER_ID) {
-  console.error('Set USER_ID to the Supabase auth user ID to attach these tasks to.')
-  console.error(
-    'Find yours: sign in once via the app, then Supabase Dashboard → Authentication → Users.'
-  )
+const { EMAIL, USER_ID } = process.env
+if (!EMAIL && !USER_ID) {
+  console.error('Set EMAIL (your account email) or USER_ID (Supabase auth user ID).')
   process.exit(1)
 }
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY)
+
+async function resolveUserId() {
+  if (USER_ID) return USER_ID
+
+  const { data, error } = await supabase.auth.admin.listUsers()
+  if (error) {
+    console.error('Could not look up users:', error.message)
+    process.exit(1)
+  }
+
+  const match = data.users.find((user) => user.email?.toLowerCase() === EMAIL.toLowerCase())
+  if (!match) {
+    console.error(`No account found for ${EMAIL}.`)
+    process.exit(1)
+  }
+
+  return match.id
+}
 
 // Mirrors hooks/useWeightCalculator.js exactly — kept in sync manually
 // since this script talks to the database directly rather than through
@@ -52,103 +65,10 @@ function computeWeight(priority, effort) {
   return Math.round((priority * PRIORITY_WEIGHT + effort * EFFORT_WEIGHT) * 10) / 10
 }
 
-function hoursFromNow(hours) {
-  return new Date(Date.now() + hours * 60 * 60 * 1000).toISOString()
-}
-function daysFromNow(days) {
-  return new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
-}
-
-// effort/priority are 1-5. Due dates deliberately spread across:
-// overdue, due today (x2, to test weight breaking a same-day tie), a
-// couple of near-term high-effort tasks (to test the day-budget
-// scheduler pushing recommendedStart earlier than the due date), and
-// far-out tasks including a high-weight one that should still lose to
-// anything overdue or due today.
-const TASKS = [
-  {
-    title: 'Submit lab report (overdue)',
-    description: 'Was due yesterday — should win the Smart Start decision outright.',
-    effort: 2,
-    priority: 3,
-    dueDate: hoursFromNow(-24),
-  },
-  {
-    title: 'Finish reading ch. 5',
-    description: 'Due today, low weight — tests losing a same-day tiebreak.',
-    effort: 1,
-    priority: 2,
-    dueDate: hoursFromNow(4),
-  },
-  {
-    title: 'Study for quiz',
-    description: 'Due today, higher weight — should win the same-day tiebreak.',
-    effort: 3,
-    priority: 5,
-    dueDate: hoursFromNow(6),
-  },
-  {
-    title: 'Research paper outline',
-    description: '2 days out but high effort — may push recommendedStart to today.',
-    effort: 5,
-    priority: 4,
-    dueDate: daysFromNow(2),
-  },
-  {
-    title: 'Group project slides',
-    description: '3 days out, moderately effortful — competes for the same daily budget.',
-    effort: 4,
-    priority: 3,
-    dueDate: daysFromNow(3),
-  },
-  {
-    title: 'Optional reading',
-    description: 'Far out, low priority/effort — should sit at the bottom.',
-    effort: 1,
-    priority: 1,
-    dueDate: daysFromNow(10),
-  },
-  {
-    title: 'Final project',
-    description: 'Highest possible weight, but due a month out — should still lose to anything overdue or due today.',
-    effort: 5,
-    priority: 5,
-    dueDate: daysFromNow(30),
-  },
-  // No due date — these only compete in the "No Deadline" section,
-  // ranked purely by weight.
-  {
-    title: 'Read for fun',
-    description: 'No due date, lowest weight — should sit at the bottom of that section.',
-    effort: 1,
-    priority: 1,
-    dueDate: null,
-  },
-  {
-    title: 'Clean desk',
-    description: 'No due date, tied weight with "Water plants" — created first, so should win that tiebreak.',
-    effort: 2,
-    priority: 2,
-    dueDate: null,
-  },
-  {
-    title: 'Water plants',
-    description: 'No due date, tied weight with "Clean desk" — created second, should lose that tiebreak.',
-    effort: 2,
-    priority: 2,
-    dueDate: null,
-  },
-  {
-    title: 'Update resume',
-    description: 'No due date, highest weight of the bunch — should be the decided "No Deadline" task.',
-    effort: 3,
-    priority: 4,
-    dueDate: null,
-  },
-]
-
 async function seed() {
-  console.log(`Seeding ${TASKS.length} test tasks for user ${USER_ID} ...\n`)
+  const userId = await resolveUserId()
+
+  console.log(`Seeding ${TASKS.length} test tasks for user ${userId} ...\n`)
 
   for (const task of TASKS) {
     const weight = computeWeight(task.priority, task.effort)
@@ -162,7 +82,7 @@ async function seed() {
         priority: task.priority,
         weight,
         due_date: task.dueDate,
-        user_id: USER_ID,
+        user_id: userId,
       })
       .select()
       .single()
@@ -176,15 +96,7 @@ async function seed() {
   }
 
   console.log('\nDone. Refresh Smart Start to see the new decision.')
-  console.log('To remove these again: USER_ID=... node scripts/remove-seeded-test-tasks.mjs')
+  console.log('To remove these again: EMAIL=... node scripts/remove-seeded-test-tasks.mjs')
 }
 
-// Exported so remove-seeded-test-tasks.mjs can match on the exact same
-// titles instead of keeping its own copy of this list that could drift.
-export { TASKS }
-
-// Only auto-run when executed directly (`node scripts/seed-test-tasks.mjs`),
-// not when imported by the cleanup script.
-if (import.meta.url === `file://${process.argv[1]}`) {
-  seed()
-}
+seed()

@@ -2,34 +2,62 @@
 // deletes only the ones whose title exactly matches one this repo's
 // seed script creates, so it won't touch anything you added yourself
 // even if it happens to share a due date or weight with a seeded one.
+// No CONFIRM gate needed (unlike remove-all-tasks.mjs) — the seeded-
+// title filter already makes this safe to run without a second flag.
 //
 // v2: talks to Supabase directly with the service-role key, same as
 // seed-test-tasks.mjs now does — see that file's comment for why.
 //
+// v3: identify the user by EMAIL (looked up via the Supabase admin
+// API) as an alternative to USER_ID, same convenience as
+// remove-all-tasks.mjs, so you don't have to go dig your UUID out of
+// the Supabase dashboard.
+//
 // Usage:
+//   EMAIL=you@example.com node scripts/remove-seeded-test-tasks.mjs
 //   USER_ID=<your-uuid> node scripts/remove-seeded-test-tasks.mjs
 import { createClient } from '@supabase/supabase-js'
 import { loadEnvLocal } from './loadEnv.mjs'
-import { TASKS } from './seed-test-tasks.mjs'
+import { TASKS } from './seedTaskData.mjs'
 
 loadEnvLocal()
 
-const USER_ID = process.env.USER_ID
-if (!USER_ID) {
-  console.error('Set USER_ID to the Supabase auth user ID whose seeded tasks should be removed.')
+const { EMAIL, USER_ID } = process.env
+if (!EMAIL && !USER_ID) {
+  console.error('Set EMAIL (your account email) or USER_ID (Supabase auth user ID).')
   process.exit(1)
 }
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY)
 const SEEDED_TITLES = new Set(TASKS.map((task) => task.title))
 
+async function resolveUserId() {
+  if (USER_ID) return USER_ID
+
+  const { data, error } = await supabase.auth.admin.listUsers()
+  if (error) {
+    console.error('Could not look up users:', error.message)
+    process.exit(1)
+  }
+
+  const match = data.users.find((user) => user.email?.toLowerCase() === EMAIL.toLowerCase())
+  if (!match) {
+    console.error(`No account found for ${EMAIL}.`)
+    process.exit(1)
+  }
+
+  return match.id
+}
+
 async function removeSeeded() {
-  console.log(`Looking for seeded test tasks belonging to user ${USER_ID} ...\n`)
+  const userId = await resolveUserId()
+
+  console.log(`Looking for seeded test tasks belonging to user ${userId} ...\n`)
 
   const { data: allTasks, error } = await supabase
     .from('tasks')
     .select('id, title')
-    .eq('user_id', USER_ID)
+    .eq('user_id', userId)
 
   if (error) {
     console.error('Could not fetch tasks:', error.message)
