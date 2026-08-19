@@ -136,6 +136,12 @@
   width: 4rem;
 }
 
+.hint {
+  font-size: 0.75rem;
+  font-style: italic;
+  font-weight: 400;
+}
+
 /* --- Productivity tips --- */
 .tipCard {
   background: var(--surface);

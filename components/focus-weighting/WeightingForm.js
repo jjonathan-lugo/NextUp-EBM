@@ -94,6 +94,10 @@ export default function WeightingForm() {
 
       <label className={styles.field}>
         Effort (1-5)
+        <span className={styles.hint}>
+          How much work it&apos;ll take — not how important it is. 5 = a major
+          undertaking, 1 = a quick task.
+        </span>
         <input
           type="number"
           min="1"
@@ -104,6 +108,10 @@ export default function WeightingForm() {
       </label>
       <label className={styles.field}>
         Priority (1-5)
+        <span className={styles.hint}>
+          How important this is to you — not how soon it&apos;s due (due date is
+          separate). 5 = must get done, 1 = nice to have.
+        </span>
         <input
           type="number"
           min="1"
