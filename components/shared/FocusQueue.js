@@ -4,23 +4,22 @@
 // team should confirm ownership and where it renders (candidate: the
 // homepage, pages/index.js — flag before editing, it's a shared file).
 //
-// Shows only the top few recommended tasks by default (choice-overload
-// research, see Project Handoff doc), but a "Show more" control lets
-// someone who actually wants to plan further ahead see past that
-// default instead of being capped at it — useFocusQueue now returns the
-// full ranked queue and this component decides how much of it to render.
+// Shows PAGE_SIZE recommended tasks at a time, side by side, with left/
+// right arrows to page through the rest — was "Show 3 more" / "Show
+// fewer" buttons that grew a single stacked column taller each click;
+// this instead pages through fixed-size groups laid out horizontally.
+// useFocusQueue still returns the full ranked queue; this component
+// just decides how it's paged/displayed.
 import { useState } from 'react'
 import { useFocusQueue } from '../../hooks/useFocusQueue'
 import TaskCard from './TaskCard'
-import Button from '../Button'
 import styles from './FocusQueue.module.css'
 
-const DEFAULT_VISIBLE = 3
-const SHOW_MORE_STEP = 3
+const PAGE_SIZE = 3
 
 export default function FocusQueue() {
   const { tasks, loading } = useFocusQueue()
-  const [visibleCount, setVisibleCount] = useState(DEFAULT_VISIBLE)
+  const [pageIndex, setPageIndex] = useState(0)
 
   if (loading) {
     return <p>Loading your queue...</p>
@@ -30,36 +29,48 @@ export default function FocusQueue() {
     return <p>No tasks queued.</p>
   }
 
-  const visibleTasks = tasks.slice(0, visibleCount)
-  const remaining = tasks.length - visibleCount
-  const isExpanded = visibleCount > DEFAULT_VISIBLE
+  const totalPages = Math.ceil(tasks.length / PAGE_SIZE)
+  const start = pageIndex * PAGE_SIZE
+  const visibleTasks = tasks.slice(start, start + PAGE_SIZE)
+  const canGoBack = pageIndex > 0
+  const canGoForward = pageIndex < totalPages - 1
 
   return (
     <section>
       <h2>Focus Queue</h2>
 
-      <div className={styles.cardList}>
-        {visibleTasks.map((task) => (
-          <TaskCard key={task.id} task={task} showWeight />
-        ))}
+      <div className={styles.carousel}>
+        <button
+          type="button"
+          className={styles.arrow}
+          onClick={() => setPageIndex((index) => index - 1)}
+          disabled={!canGoBack}
+          aria-label="Show previous tasks"
+        >
+          ‹
+        </button>
+
+        <div className={styles.cardList}>
+          {visibleTasks.map((task) => (
+            <TaskCard key={task.id} task={task} showWeight />
+          ))}
+        </div>
+
+        <button
+          type="button"
+          className={styles.arrow}
+          onClick={() => setPageIndex((index) => index + 1)}
+          disabled={!canGoForward}
+          aria-label="Show more tasks"
+        >
+          ›
+        </button>
       </div>
 
-      {(remaining > 0 || isExpanded) && (
-        <div className={styles.controls}>
-          {remaining > 0 && (
-            <Button
-              variant="ghost"
-              onClick={() => setVisibleCount((count) => Math.min(count + SHOW_MORE_STEP, tasks.length))}
-            >
-              Show {Math.min(SHOW_MORE_STEP, remaining)} more
-            </Button>
-          )}
-          {isExpanded && (
-            <Button variant="ghost" onClick={() => setVisibleCount(DEFAULT_VISIBLE)}>
-              Show fewer
-            </Button>
-          )}
-        </div>
+      {totalPages > 1 && (
+        <p className={styles.pageIndicator}>
+          {pageIndex + 1} of {totalPages}
+        </p>
       )}
     </section>
   )

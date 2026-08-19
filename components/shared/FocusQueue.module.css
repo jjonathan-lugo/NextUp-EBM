@@ -1,13 +1,58 @@
 /* Shared — coordinate before editing */
-.cardList {
+.carousel {
   display: flex;
-  flex-direction: column;
+  align-items: stretch;
   gap: 0.75rem;
 }
 
-.controls {
+.cardList {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.cardList > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.arrow {
+  flex-shrink: 0;
+  width: 2.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+
+.arrow:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pageIndicator {
+  margin-top: 0.6rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Cards squeeze too tight side by side on a phone — stack the current
+   page's cards instead, still paged in groups of PAGE_SIZE by the same
+   arrows. */
+@media (max-width: 640px) {
+  .cardList {
+    flex-direction: column;
+  }
 }
