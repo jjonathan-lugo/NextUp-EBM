@@ -32,14 +32,8 @@
   margin: 0;
 }
 
-/* Subtle gradient wash behind the hero block instead of an image — keeps
-   the page lightweight, and reuses the existing --accent-soft token so it
-   matches the badges/pills used elsewhere in the app. */
 .hero {
-  margin: -1rem -1rem 3rem;
-  padding: 2.5rem 1rem 1.5rem;
-  border-radius: var(--radius);
-  background: linear-gradient(180deg, var(--accent-soft) 0%, rgba(0, 0, 0, 0) 100%);
+  margin-bottom: 3rem;
 }
 
 .eyebrow {
