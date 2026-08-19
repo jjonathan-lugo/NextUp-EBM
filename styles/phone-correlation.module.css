@@ -12,9 +12,11 @@
   color: var(--text);
 }
 
+/* Page title tier — matches the other two feature pages' .main h1. */
 .main h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   margin: 0 0 1.5rem;
 }
 

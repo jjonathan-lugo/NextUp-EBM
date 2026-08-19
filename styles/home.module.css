@@ -6,9 +6,16 @@
   color: var(--text);
 }
 
+/* This is the biggest text on the entire site, on purpose — the same
+   "NextUp" name shows up small in the header on every page (see
+   AppHeader.module.css's .brand), but only the homepage hero gets to be
+   the actual headline. clamp() keeps it from overwhelming small screens
+   while still reading as clearly bigger than every subheading below it. */
 .main h1 {
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: clamp(2.5rem, 7vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
   margin: 0;
 }
 
@@ -44,9 +51,13 @@
   margin: 1.75rem 0;
 }
 
+/* Sits one tier below the hero and one tier above featureTitle/body, so
+   the page reads hero -> section head -> card title -> body instead of
+   everything clustering around the same size. */
 .aboutTitle {
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   margin: 0 0 0.6rem;
 }
 

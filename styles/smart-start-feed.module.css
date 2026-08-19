@@ -12,9 +12,13 @@
   color: var(--text);
 }
 
+/* Page title tier — matches focus-weighting.module.css's .main h1 so all
+   three feature pages share one scale: hero > page title > card title >
+   body. */
 .main h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   margin: 0 0 1.5rem;
 }
 
