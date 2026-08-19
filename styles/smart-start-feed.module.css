@@ -5,6 +5,22 @@
    elimination, so the decided task gets a clear card + a highlighted
    "why" callout, while the full task list (a deliberate second-class
    view behind a toggle) stays visually quieter. */
+
+/* Local to this module on purpose — see the NOTE in global.css.
+   @keyframes names get scoped/hashed by CSS Modules just like class
+   names, so this can't live in plain global.css and still match the
+   `animation: fadeInUp ...` references below. */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Was max-width: 640px — widened so the decided task and the tips feed
    (see .grid below) can sit side by side on anything wider than a
    tablet, instead of stacking into one narrow column. */
@@ -13,7 +29,7 @@
   margin: 0 auto;
   padding: 3rem 2rem 4rem;
   color: var(--text);
-  animation: fadeInUp 0.5s ease both;
+  animation: fadeInUp 0.65s ease both;
 }
 
 .grid {

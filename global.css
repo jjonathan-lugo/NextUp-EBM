@@ -57,22 +57,18 @@ body {
   hyphens: auto;
 }
 
-/* Shared entrance animation — each page's .main module uses this to fade
-   + rise in on load instead of just snapping into place, and a few
-   dynamic elements (a nudge appearing, a "why" callout updating, a
-   correlation summary loading in) reuse it too so new content doesn't
-   just pop in. Defined once here instead of per-module since @keyframes
-   can't be scoped by CSS Modules the way classes are. */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* NOTE on @keyframes fadeInUp: it is NOT defined here. Next.js's CSS
+   Modules loader scopes @keyframes names per-file the same way it scopes
+   class names (fadeInUp -> something like
+   home-module__NoU7wq__fadeInUp), but only inside files ending in
+   .module.css — this plain global.css is never run through that
+   scoping. A keyframes block defined here would keep the literal name
+   "fadeInUp", which does NOT match the hashed name every
+   `animation: fadeInUp ...` in a *.module.css file actually resolves
+   to — so the animation would silently no-op (this happened; caught
+   because "nothing looked like it changed"). Each *.module.css file
+   that uses it now defines its own local `@keyframes fadeInUp` instead,
+   so the keyframes and the reference get scoped together. */
 
 /* Respect "reduce motion" OS setting — everything above still works,
    this just collapses every animation/transition to effectively

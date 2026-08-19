@@ -5,6 +5,22 @@
    section over a wall of competing controls — cards to group each
    feature, a segmented control instead of two loose buttons for mode
    switching, and a muted palette so nothing shouts for attention. */
+
+/* Local to this module on purpose — see the NOTE in global.css.
+   @keyframes names get scoped/hashed by CSS Modules just like class
+   names, so this can't live in plain global.css and still match the
+   `animation: fadeInUp ...` references below. */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .main {
   --accent: #0076ff;
   --accent-soft: rgba(0, 118, 255, 0.12);
@@ -24,7 +40,7 @@
   max-width: 980px;
   margin: 0 auto;
   color: var(--text);
-  animation: fadeInUp 0.5s ease both;
+  animation: fadeInUp 0.65s ease both;
 }
 
 /* Two content blocks (FocusTimer, WeightingForm) side by side once
