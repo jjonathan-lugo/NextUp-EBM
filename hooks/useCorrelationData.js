@@ -1,23 +1,33 @@
 // Owner: Malika
 //
-// Bug fix: this used to compute completed-task count ONCE across the
-// user's entire task history (`tasks.filter(status === 'done').length`)
-// and then stamp that same single number onto every phone-time entry,
-// regardless of that entry's date. That made the correlation math
-// meaningless — a phone-time entry from three weeks ago and one from
-// today would be compared against the identical "completed tasks"
-// number, so any real day-to-day relationship between phone use and
-// task completion couldn't show up.
+// v1 bug: computed completed-task count ONCE across the user's entire
+// task history and stamped that same single number onto every
+// phone-time entry regardless of date — a phone-time entry from three
+// weeks ago and one from today were compared against the identical
+// number.
 //
-// Fixed to bucket completed tasks by the calendar day they were
-// completed and match each phone-time entry against its own day's count.
+// v2 bug: fixed the above by bucketing completed tasks by day and
+// matching each entry to its own day's count — but a phone-time entry is
+// logged per button-press (see PhoneTimeLogger.js), not once a day. A
+// user logging 5 times in one day got 5 rows all showing that day's
+// full completed-task count, including entries logged *before* any task
+// was actually completed that day, which reads as if the count changed
+// retroactively.
+//
+// v3 (current): aggregates same-day phone-time entries into a single
+// row — summed minutes for the day — before correlating against that
+// day's completed-task count. One row per day, matching the feature's
+// original framing ("days with more phone time tend to..."), and no
+// single day's task count gets effectively double/triple-counted across
+// several log entries.
+//
 // There's no dedicated "completedAt" field on the Task model
-// (data/models/Task.js), so updatedAt is used as the best available
-// completion-date proxy — it's set whenever a task is updated, and
-// marking a task done (see TaskPicker.js's handleMarkDone) is a normal
-// update, so in practice this is the completion timestamp unless a task
-// is edited again *after* being marked done, which would shift its
-// bucketed day to the edit instead.
+// (data/models/Task.js), so a task's updatedAt is used as the best
+// available completion-date proxy — it's set whenever a task is
+// updated, and marking a task done (see TaskPicker.js's handleMarkDone)
+// is a normal update, so in practice this is the completion timestamp
+// unless a task is edited again *after* being marked done, which would
+// shift its bucketed day to the edit instead.
 import { useEffect, useState } from 'react'
 import { useTimezone } from './useTimezone'
 import { zonedDayKey } from '../data/timezone'
@@ -56,14 +66,19 @@ export function useCorrelationData() {
           completedByDay[dayKey] = (completedByDay[dayKey] || 0) + 1
         }
 
-        const correlationData = phoneEntries.map((entry) => {
+        const phoneMinutesByDay = {}
+        for (const entry of phoneEntries) {
           const dayKey = zonedDayKey(entry.date, timezone)
-          return {
-            date: entry.date,
-            phoneMinutes: entry.minutes,
+          phoneMinutesByDay[dayKey] = (phoneMinutesByDay[dayKey] || 0) + entry.minutes
+        }
+
+        const correlationData = Object.keys(phoneMinutesByDay)
+          .sort()
+          .map((dayKey) => ({
+            date: dayKey,
+            phoneMinutes: phoneMinutesByDay[dayKey],
             completedTasks: completedByDay[dayKey] || 0,
-          }
-        })
+          }))
 
         if (!cancelled) setData(correlationData)
       } catch (error) {
