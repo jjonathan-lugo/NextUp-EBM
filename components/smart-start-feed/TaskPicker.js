@@ -41,9 +41,20 @@ import Button from '../Button'
 import { useTimezone } from '../../hooks/useTimezone'
 import { zonedTimeToUtc, utcToZonedDateTimeLocal, formatZonedDate, formatZonedDateTime, formatZonedTime, isSameZonedDay } from '../../data/timezone'
 import { rankTasks, rankByWeight, urgencyTier, URGENCY } from '../../data/rankTasks'
+import { minLeadDays } from '../../data/scheduleTasks'
 import { fetchRecommendations } from '../../data/fetchRecommendations'
 import { authFetch } from '../../data/authFetch'
 import styles from '../../styles/smart-start-feed.module.css'
+
+// Mirrors the hint shown in WeightingForm.js — lets someone see, right
+// where they're setting effort, how much of a heads-up that level
+// actually gets from the scheduler (data/scheduleTasks.js's
+// MIN_LEAD_DAYS), instead of only discovering it later in a recommendation.
+function noticeHint(effort) {
+  const days = minLeadDays(effort)
+  if (days === 0) return 'No extra advance notice — Smart Start can wait until the last day for this.'
+  return `Smart Start will recommend starting at least ${days} day${days === 1 ? '' : 's'} before the due date.`
+}
 
 function EditTaskForm({ task, onCancel, onSaved }) {
   const { timezone } = useTimezone()
@@ -113,6 +124,7 @@ function EditTaskForm({ task, onCancel, onSaved }) {
           How much work it&apos;ll take — not how important it is. 5 = a major
           undertaking, 1 = a quick task.
         </span>
+        <span className={styles.hint}>{noticeHint(effort)}</span>
         <input
           type="number"
           min="1"

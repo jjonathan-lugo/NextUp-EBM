@@ -3,7 +3,14 @@ import { useState } from 'react'
 import { useWeightCalculator } from '../../hooks/useWeightCalculator'
 import { useTimezone } from '../../hooks/useTimezone'
 import { zonedTimeToUtc } from '../../data/timezone'
+import { minLeadDays } from '../../data/scheduleTasks'
 import { authFetch } from '../../data/authFetch'
+
+function noticeHint(effort) {
+  const days = minLeadDays(effort)
+  if (days === 0) return 'No extra advance notice — Smart Start can wait until the last day for this.'
+  return `Smart Start will recommend starting at least ${days} day${days === 1 ? '' : 's'} before the due date.`
+}
 import TaskWeightBar from './TaskWeightBar'
 import Button from '../Button'
 import styles from '../../styles/focus-weighting.module.css'
@@ -99,6 +106,7 @@ export default function WeightingForm() {
           How much work it&apos;ll take — not how important it is. 5 = a major
           undertaking, 1 = a quick task.
         </span>
+        <span className={styles.hint}>{noticeHint(effort)}</span>
         <input
           type="number"
           min="1"

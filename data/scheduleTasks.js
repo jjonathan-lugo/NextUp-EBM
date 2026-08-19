@@ -53,7 +53,11 @@ const MIN_LEAD_DAYS = {
   5: 7,
 }
 
-function minLeadDays(effort) {
+// Exported so the task-creation/edit forms (WeightingForm.js,
+// TaskPicker.js's EditTaskForm) can show someone what notice their
+// chosen effort level actually gets, instead of that only being visible
+// after the fact in Smart Start's recommendation.
+export function minLeadDays(effort) {
   const clamped = Math.max(1, Math.min(5, effort))
   return MIN_LEAD_DAYS[clamped]
 }
