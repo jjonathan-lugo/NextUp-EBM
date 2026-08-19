@@ -1,10 +1,10 @@
 // Owner: J — scoring endpoint
 
-// NOTE: mirrors the formula in hooks/useWeightCalculator.js (same
-// placeholder-judgment-call caveat applies — see that file's comment).
-// Duplicated here rather than extracted to a shared module since this
-// was scoped to this file only; worth factoring into e.g. lib/weight.js
-// if the formula changes, so client and server don't drift.
+// NOTE: mirrors the confirmed formula in hooks/useWeightCalculator.js —
+// see that file's comment. Duplicated here rather than extracted to a
+// shared module since this was scoped to this file only; worth
+// factoring into e.g. lib/weight.js if the formula ever changes, so
+// client and server don't drift.
 const PRIORITY_WEIGHT = 1.5
 const EFFORT_WEIGHT = 0.5
 
