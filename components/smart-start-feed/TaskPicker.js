@@ -42,6 +42,7 @@ import { useTimezone } from '../../hooks/useTimezone'
 import { zonedTimeToUtc, utcToZonedDateTimeLocal, formatZonedDate, formatZonedTime, isSameZonedDay } from '../../data/timezone'
 import { rankTasks, rankByWeight } from '../../data/rankTasks'
 import { fetchRecommendations } from '../../data/fetchRecommendations'
+import styles from '../../styles/smart-start-feed.module.css'
 
 function EditTaskForm({ task, onCancel, onSaved }) {
   const { timezone } = useTimezone()
@@ -92,12 +93,12 @@ function EditTaskForm({ task, onCancel, onSaved }) {
   }
 
   return (
-    <div>
-      <label>
+    <div className={styles.editForm}>
+      <label className={styles.field}>
         Title
         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
       </label>
-      <label>
+      <label className={styles.field}>
         Due date
         <input
           type="datetime-local"
@@ -105,7 +106,7 @@ function EditTaskForm({ task, onCancel, onSaved }) {
           onChange={(e) => setDueDate(e.target.value)}
         />
       </label>
-      <label>
+      <label className={styles.field}>
         Effort (1-5)
         <input
           type="number"
@@ -115,7 +116,7 @@ function EditTaskForm({ task, onCancel, onSaved }) {
           onChange={(e) => setEffort(Number(e.target.value))}
         />
       </label>
-      <label>
+      <label className={styles.field}>
         Priority (1-5)
         <input
           type="number"
@@ -125,11 +126,13 @@ function EditTaskForm({ task, onCancel, onSaved }) {
           onChange={(e) => setPriority(Number(e.target.value))}
         />
       </label>
-      <Button onClick={handleSave} disabled={saving}>
-        {saving ? 'Saving…' : 'Save'}
-      </Button>
-      <Button onClick={onCancel}>Cancel</Button>
-      {error && <p>{error}</p>}
+      <div className={styles.actions}>
+        <Button onClick={handleSave} disabled={saving}>
+          {saving ? 'Saving…' : 'Save'}
+        </Button>
+        <Button onClick={onCancel}>Cancel</Button>
+      </div>
+      {error && <p className={styles.errorText}>{error}</p>}
     </div>
   )
 }
@@ -315,59 +318,71 @@ export default function TaskPicker() {
 
   return (
     <div>
-      <h2>Start This</h2>
+      <h2 className={styles.sectionTitle}>Start This</h2>
 
-      {actionError && <p role="alert">{actionError}</p>}
+      {actionError && <p className={styles.errorText} role="alert">{actionError}</p>}
 
       {recommendationsLoading && !decidedTask ? (
-        <p>Deciding what to start...</p>
+        <p className={styles.emptyState}>Deciding what to start...</p>
       ) : !decidedTask ? (
-        <p>No pending tasks with a due date.</p>
+        <p className={styles.emptyState}>No pending tasks with a due date.</p>
       ) : editingId === decidedTask.id ? (
-        <EditTaskForm
-          task={decidedTask}
-          onCancel={() => setEditingId(null)}
-          onSaved={handleSaved}
-        />
+        <div className={styles.decisionCard}>
+          <EditTaskForm
+            task={decidedTask}
+            onCancel={() => setEditingId(null)}
+            onSaved={handleSaved}
+          />
+        </div>
       ) : (
-        <div>
+        <div className={styles.decisionCard}>
           <TaskCard task={decidedTask} showWeight />
-          <p>{describeDecision(decidedTask, recommendations[decidedTask.id], timezone)}</p>
-          <Button onClick={() => setEditingId(decidedTask.id)}>Edit</Button>
-          <Button onClick={() => handleMarkDone(decidedTask.id)}>Mark done</Button>
-          <Button onClick={() => handleDelete(decidedTask.id)}>Delete</Button>
+          <p className={styles.reason}>
+            {describeDecision(decidedTask, recommendations[decidedTask.id], timezone)}
+          </p>
+          <div className={styles.actions}>
+            <Button onClick={() => setEditingId(decidedTask.id)}>Edit</Button>
+            <Button onClick={() => handleMarkDone(decidedTask.id)}>Mark done</Button>
+            <Button onClick={() => handleDelete(decidedTask.id)}>Delete</Button>
+          </div>
         </div>
       )}
 
-      <h2>No Deadline — Do This Next</h2>
+      <h2 className={styles.sectionTitle}>No Deadline — Do This Next</h2>
 
       {!decidedAnytimeTask ? (
-        <p>No pending tasks without a due date.</p>
+        <p className={styles.emptyState}>No pending tasks without a due date.</p>
       ) : editingId === decidedAnytimeTask.id ? (
-        <EditTaskForm
-          task={decidedAnytimeTask}
-          onCancel={() => setEditingId(null)}
-          onSaved={handleSaved}
-        />
+        <div className={styles.decisionCard}>
+          <EditTaskForm
+            task={decidedAnytimeTask}
+            onCancel={() => setEditingId(null)}
+            onSaved={handleSaved}
+          />
+        </div>
       ) : (
-        <div>
+        <div className={styles.decisionCard}>
           <TaskCard task={decidedAnytimeTask} showWeight />
-          <p>{describeAnytimeDecision(decidedAnytimeTask)}</p>
-          <Button onClick={() => setEditingId(decidedAnytimeTask.id)}>Edit</Button>
-          <Button onClick={() => handleMarkDone(decidedAnytimeTask.id)}>Mark done</Button>
-          <Button onClick={() => handleDelete(decidedAnytimeTask.id)}>Delete</Button>
+          <p className={styles.reason}>{describeAnytimeDecision(decidedAnytimeTask)}</p>
+          <div className={styles.actions}>
+            <Button onClick={() => setEditingId(decidedAnytimeTask.id)}>Edit</Button>
+            <Button onClick={() => handleMarkDone(decidedAnytimeTask.id)}>Mark done</Button>
+            <Button onClick={() => handleDelete(decidedAnytimeTask.id)}>Delete</Button>
+          </div>
         </div>
       )}
 
-      <Button onClick={() => setShowAll((value) => !value)}>
-        {showAll ? 'Hide' : 'Show'} all tasks
-      </Button>
+      <div className={styles.toggleRow}>
+        <Button onClick={() => setShowAll((value) => !value)}>
+          {showAll ? 'Hide' : 'Show'} all tasks
+        </Button>
+      </div>
 
       {showAll && (
-        <ul>
+        <ul className={styles.taskList}>
           {tasks.map((task) =>
             editingId === task.id ? (
-              <li key={task.id}>
+              <li key={task.id} className={styles.taskRow}>
                 <EditTaskForm
                   task={task}
                   onCancel={() => setEditingId(null)}
@@ -375,19 +390,29 @@ export default function TaskPicker() {
                 />
               </li>
             ) : (
-              <li key={task.id}>
-                <strong style={task.status === 'done' ? { textDecoration: 'line-through' } : undefined}>
+              <li key={task.id} className={styles.taskRow}>
+                <span
+                  className={
+                    task.status === 'done'
+                      ? `${styles.taskTitle} ${styles.taskDone}`
+                      : styles.taskTitle
+                  }
+                >
                   {task.title}
-                </strong>
-                {' (weight: '}
-                {task.weight ?? '—'}
-                {') — '}
-                {describeRecommendation(task, recommendations[task.id], timezone, recommendationsLoading)}{' '}
-                <Button onClick={() => setEditingId(task.id)}>Edit</Button>
-                {task.status !== 'done' && (
-                  <Button onClick={() => handleMarkDone(task.id)}>Mark done</Button>
-                )}
-                <Button onClick={() => handleDelete(task.id)}>Delete</Button>
+                </span>
+                <span className={styles.taskMeta}>
+                  {'Weight: '}
+                  {task.weight ?? '—'}
+                  {' — '}
+                  {describeRecommendation(task, recommendations[task.id], timezone, recommendationsLoading)}
+                </span>
+                <div className={styles.taskActions}>
+                  <Button onClick={() => setEditingId(task.id)}>Edit</Button>
+                  {task.status !== 'done' && (
+                    <Button onClick={() => handleMarkDone(task.id)}>Mark done</Button>
+                  )}
+                  <Button onClick={() => handleDelete(task.id)}>Delete</Button>
+                </div>
               </li>
             )
           )}

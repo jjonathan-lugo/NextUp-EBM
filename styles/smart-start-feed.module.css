@@ -1,18 +1,157 @@
-/* Owner: Grace */
-
+/* Owner: Grace
+   Design intent: matches the token system in global.css (shared with
+   focus-weighting.module.css) so the app reads as one product instead of
+   three differently-styled pages. Smart Start's whole point is choice
+   elimination, so the decided task gets a clear card + a highlighted
+   "why" callout, while the full task list (a deliberate second-class
+   view behind a toggle) stays visually quieter. */
 .main {
-  max-width: 800px;
+  max-width: 640px;
   margin: 0 auto;
-  padding: 3rem 2rem;
-  min-height: 100vh;
+  padding: 2rem;
+  color: var(--text);
 }
 
 .main h1 {
-  font-size: 2.5rem;
-  text-align: center;
-  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem;
 }
 
 .main > * {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space);
+}
+
+.sectionTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+/* --- Decided task (both "Start This" and "No Deadline") --- */
+.decisionCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space);
+  margin-bottom: var(--space);
+}
+
+/* The "why" line — same soft-callout treatment as focus-weighting's
+   nudge, since both are gentle explanations rather than alerts. */
+.reason {
+  margin: 0.75rem 0 1rem;
+  padding: 0.7rem 1rem;
+  background: var(--accent-soft);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.emptyState {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.errorText {
+  color: #c0392b;
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* --- "Show all tasks" toggle + full list --- */
+.toggleRow {
+  margin: 0.5rem 0 1rem;
+}
+
+.taskList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.taskRow {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+}
+
+.taskTitle {
+  font-weight: 600;
+}
+
+.taskDone {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.taskMeta {
+  display: block;
+  margin: 0.35rem 0 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.taskActions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+/* --- Edit form (shared by both decision cards and the full list) --- */
+.editForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.field input {
+  padding: 0.5em;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 20rem;
+}
+
+.field input[type='number'] {
+  width: 4rem;
+}
+
+/* --- Productivity tips --- */
+.tipCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space);
+}
+
+.tipCard h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.tipCard p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }

@@ -5,6 +5,7 @@
 // showWeight     — smart-start-feed / focus-weighting: show computed weight
 // showTimer      — focus-weighting: show time spent this session
 // showPhoneStat  — phone-correlation: show phone-time stat for this task
+import styles from './TaskCard.module.css'
 
 function formatDuration(totalSeconds) {
   const minutes = Math.floor(totalSeconds / 60)
@@ -21,20 +22,24 @@ export default function TaskCard({
 }) {
   if (!task) return null
 
-  return (
-    <div onClick={() => onSelect && onSelect(task)}>
-      <h3>{task.title}</h3>
-      {task.description && <p>{task.description}</p>}
+  const cardClassName = onSelect ? `${styles.card} ${styles.clickable}` : styles.card
 
-      {showWeight && <p>Weight: {task.weight ?? '—'}</p>}
-      {showTimer && <p>Time spent: {formatDuration(task.timeSpentSeconds ?? 0)}</p>}
+  return (
+    <div className={cardClassName} onClick={() => onSelect && onSelect(task)}>
+      <h3 className={styles.title}>{task.title}</h3>
+      {task.description && <p className={styles.description}>{task.description}</p>}
+
+      {showWeight && <p className={styles.meta}>Weight: {task.weight ?? '—'}</p>}
+      {showTimer && (
+        <p className={styles.meta}>Time spent: {formatDuration(task.timeSpentSeconds ?? 0)}</p>
+      )}
       {showPhoneStat && (
         // Not implemented: no per-task phone-time data exists yet.
         // /api/phone-time logs are per-day totals (see
         // hooks/useCorrelationData.js), not tied to a task id — attributing
         // phone time to a specific task is a data-model decision for
         // Malika to make, not something to fake here.
-        <p>Phone time: —</p>
+        <p className={styles.meta}>Phone time: —</p>
       )}
     </div>
   )

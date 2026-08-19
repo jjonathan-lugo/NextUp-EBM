@@ -1,75 +1,124 @@
-/* Owner: Malika */
-
+/* Owner: Malika
+   Rebuilt on the shared design tokens (global.css) that
+   focus-weighting.module.css and smart-start-feed.module.css also use,
+   so all three feature pages read as one product. Previously relied on
+   generic tag selectors (.main section, .main input) with hardcoded
+   colors of its own — replaced with explicit classNames matching the
+   pattern the other two pages already use. */
 .main {
   max-width: 760px;
   margin: 0 auto;
-  padding: 3rem 2rem;
-  min-height: 100vh;
+  padding: 2rem;
+  color: var(--text);
 }
 
-/* Main page title */
-.main > h1 {
-  font-size: 2.4rem;
-  margin-bottom: 2rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
+.main h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem;
 }
 
-/* Phone logger and correlation sections */
-.main section {
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+.main > * {
+  margin-bottom: var(--space);
 }
 
-.main section h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space);
 }
 
-/* Phone-time input */
-.main input {
-  width: 160px;
-  padding: 0.7rem 0.8rem;
-  margin-right: 0.7rem;
+.card h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
 
-  border: 1px solid #d7d7d7;
+/* --- Phone-time logger --- */
+.loggerFields {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.field input {
+  padding: 0.5em;
+  border: 1px solid var(--border);
   border-radius: 8px;
-
   font-size: 1rem;
+  width: 5rem;
 }
 
-.main input:focus {
-  outline: none;
-  border-color: #555;
+.message {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
 }
 
-/* Messages and descriptions */
-.main p {
-  line-height: 1.6;
+/* --- Correlation summary --- */
+.summary {
+  background: var(--surface-muted);
+  border-radius: var(--radius);
+  padding: var(--space);
+  margin-top: 1rem;
+}
+
+.correlationValue {
+  margin: 0 0 0.4rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.dayList {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+
+.dayRow {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+
+.dayLabel {
+  font-weight: 600;
+}
+
+.explainer {
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.disclaimer {
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 /* Make the tracker comfortable on phones */
 @media (max-width: 600px) {
   .main {
-    padding: 2rem 1rem;
+    padding: 1.25rem;
   }
 
-  .main > h1 {
-    font-size: 2rem;
+  .loggerFields {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .main section {
-    padding: 1.2rem;
-  }
-
-  .main input {
+  .field input {
     width: 100%;
-    margin-right: 0;
-    margin-bottom: 0.7rem;
   }
 }

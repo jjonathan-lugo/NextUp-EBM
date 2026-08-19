@@ -14,6 +14,7 @@
 import { useEffect, useState } from 'react'
 import TipCard from './TipCard'
 import Button from '../Button'
+import styles from '../../styles/smart-start-feed.module.css'
 
 const TIPS = [
   {
@@ -111,9 +112,11 @@ export default function ProductivityTipsFeed() {
 
   return (
     <div>
-      <h2>Productivity Tips 💡</h2>
+      <h2 className={styles.sectionTitle}>Productivity Tips 💡</h2>
       <TipCard tip={tip} />
-      <Button onClick={handleNewTip}>Show another tip</Button>
+      <div className={styles.toggleRow}>
+        <Button onClick={handleNewTip}>Show another tip</Button>
+      </div>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 // Owner: Malika
 
 import { useCorrelationData } from '../../hooks/useCorrelationData'
+import styles from '../../styles/phone-correlation.module.css'
 
 // Mirrors the hours+minutes input in PhoneTimeLogger.js — showing "2h
 // 30m" instead of a bare "150 minutes" serves the same readability goal
@@ -95,7 +96,7 @@ export default function CorrelationChart() {
 
   if (loading) {
     return (
-      <section>
+      <section className={styles.card}>
         <h2>Phone Time vs. Productivity</h2>
         <p>Loading correlation data...</p>
       </section>
@@ -104,7 +105,7 @@ export default function CorrelationChart() {
 
   if (data.length < 2) {
     return (
-      <section>
+      <section className={styles.card}>
         <h2>Phone Time vs. Productivity</h2>
 
         <p>
@@ -122,18 +123,11 @@ export default function CorrelationChart() {
     getStrength(correlation)
 
   return (
-    <section>
+    <section className={styles.card}>
       <h2>Phone Time vs. Productivity</h2>
 
-      <div
-        style={{
-          padding: '20px',
-          marginTop: '16px',
-          border: '1px solid #ddd',
-          borderRadius: '12px',
-        }}
-      >
-        <h3>
+      <div className={styles.summary}>
+        <h3 className={styles.correlationValue}>
           Correlation:{' '}
           {correlation.toFixed(2)}
         </h3>
@@ -143,23 +137,13 @@ export default function CorrelationChart() {
           <strong>{strength}</strong>
         </p>
 
-        <div
-          style={{
-            display: 'grid',
-            gap: '10px',
-            marginTop: '20px',
-          }}
-        >
+        <div className={styles.dayList}>
           {data.map((item, index) => (
             <div
               key={`${item.date}-${index}`}
-              style={{
-                padding: '12px',
-                background: '#f5f5f5',
-                borderRadius: '8px',
-              }}
+              className={styles.dayRow}
             >
-              <strong>{item.date}</strong>
+              <div className={styles.dayLabel}>{item.date}</div>
 
               <div>
                 Phone time:{' '}
@@ -174,13 +158,7 @@ export default function CorrelationChart() {
           ))}
         </div>
 
-        <p
-          style={{
-            marginTop: '20px',
-            fontSize: '14px',
-            color: '#666',
-          }}
-        >
+        <p className={styles.explainer}>
           A positive correlation means phone
           time and completed tasks tend to
           increase together. A negative
@@ -188,12 +166,7 @@ export default function CorrelationChart() {
           in opposite directions.
         </p>
 
-        <p
-          style={{
-            fontSize: '13px',
-            color: '#777',
-          }}
-        >
+        <p className={styles.disclaimer}>
           Correlation shows an association;
           it does not prove causation.
         </p>

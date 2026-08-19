@@ -1,0 +1,43 @@
+/* Shared — used by FocusQueue (homepage) and TaskPicker (Smart Start).
+   Uses the design tokens defined in global.css so a task card looks the
+   same wherever it renders, without each importing page needing to
+   redefine --accent/--surface/etc itself. */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+
+/* Only look clickable when there's actually something to click —
+   TaskPicker's "decided task" cards don't pass onSelect, so they
+   shouldn't get a pointer cursor or hover treatment implying they do. */
+.clickable {
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.clickable:hover {
+  border-color: var(--accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.title {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.description {
+  margin: 0 0 0.6rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}

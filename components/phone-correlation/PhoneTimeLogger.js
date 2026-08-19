@@ -8,6 +8,7 @@
 // sending.
 import { useState } from 'react'
 import Button from '../Button'
+import styles from '../../styles/phone-correlation.module.css'
 
 export default function PhoneTimeLogger() {
   const [hours, setHours] = useState('')
@@ -61,37 +62,39 @@ export default function PhoneTimeLogger() {
   }
 
   return (
-    <section>
+    <section className={styles.card}>
       <h2>Log Phone Time</h2>
 
-      <label>
-        Hours
-        <input
-          type="number"
-          min="0"
-          value={hours}
-          placeholder="0"
-          onChange={(e) => setHours(e.target.value)}
-        />
-      </label>
+      <div className={styles.loggerFields}>
+        <label className={styles.field}>
+          Hours
+          <input
+            type="number"
+            min="0"
+            value={hours}
+            placeholder="0"
+            onChange={(e) => setHours(e.target.value)}
+          />
+        </label>
 
-      <label>
-        Minutes
-        <input
-          type="number"
-          min="0"
-          max="59"
-          value={minutes}
-          placeholder="0"
-          onChange={(e) => setMinutes(e.target.value)}
-        />
-      </label>
+        <label className={styles.field}>
+          Minutes
+          <input
+            type="number"
+            min="0"
+            max="59"
+            value={minutes}
+            placeholder="0"
+            onChange={(e) => setMinutes(e.target.value)}
+          />
+        </label>
 
-      <Button onClick={handleLog}>
-        Log
-      </Button>
+        <Button onClick={handleLog}>
+          Log
+        </Button>
+      </div>
 
-      {message && <p>{message}</p>}
+      {message && <p className={styles.message}>{message}</p>}
     </section>
   )
 }

@@ -1,3 +1,24 @@
+/* Shared design tokens — originally defined locally in
+   styles/focus-weighting.module.css (scoped to that page's .main); moved
+   here so components used across multiple features (TaskCard, and any
+   feature page that wants to match) can share one definition instead of
+   each page re-declaring its own copy that happens to match by
+   coincidence. focus-weighting.module.css keeps its own local values too
+   (harmless — a more specific/nested definition just overrides these for
+   that subtree) rather than risking a change to an already-shipped file. */
+:root {
+  --accent: #0076ff;
+  --accent-soft: rgba(0, 118, 255, 0.12);
+  --surface: #ffffff;
+  --surface-muted: #f5f6f8;
+  --border: #e3e5e8;
+  --text: #1a1a1a;
+  --text-muted: #6b7280;
+  --radius: 12px;
+  --radius-pill: 999px;
+  --space: 1.25rem;
+}
+
 body {
   font-family: 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', 'Helvetica',
     'Arial', sans-serif;
