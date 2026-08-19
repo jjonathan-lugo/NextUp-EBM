@@ -8,7 +8,9 @@
 // @property {number} effort - 1-5
 // @property {number} priority - 1-5
 // @property {number} weight - computed from effort + priority; formula
-//   confirmed in hooks/useWeightCalculator.js (priority*1.5 + effort*0.5).
+//   confirmed in data/weightFormula.js (priority*1.5 + effort*0.5),
+//   shared by client (hooks/useWeightCalculator.js) and server
+//   (pages/api/weighting.js).
 //   Due-date urgency is handled separately (data/rankTasks.js), not
 //   folded into this number. Remaining open item: a planning-fallacy
 //   stretch goal where effort estimates self-correct over time based on

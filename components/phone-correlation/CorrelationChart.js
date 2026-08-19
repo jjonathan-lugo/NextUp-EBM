@@ -6,7 +6,10 @@ import styles from '../../styles/phone-correlation.module.css'
 // Mirrors the hours+minutes input in PhoneTimeLogger.js — showing "2h
 // 30m" instead of a bare "150 minutes" serves the same readability goal
 // on the way back out.
-function formatDuration(totalMinutes) {
+// Exported (along with calculateCorrelation/getStrength below) so the
+// math can be unit tested directly instead of only indirectly through
+// the rendered component — see data/__tests__/correlationChart.test.js.
+export function formatDuration(totalMinutes) {
   const hours = Math.floor(totalMinutes / 60)
   const minutes = totalMinutes % 60
 
@@ -15,7 +18,7 @@ function formatDuration(totalMinutes) {
   return `${hours}h ${minutes}m`
 }
 
-function calculateCorrelation(data) {
+export function calculateCorrelation(data) {
   if (data.length < 2) {
     return 0
   }
@@ -72,7 +75,7 @@ function calculateCorrelation(data) {
   return numerator / denominator
 }
 
-function getStrength(correlation) {
+export function getStrength(correlation) {
   const value = Math.abs(correlation)
 
   if (value < 0.2) {
