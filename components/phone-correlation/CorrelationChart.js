@@ -2,6 +2,18 @@
 
 import { useCorrelationData } from '../../hooks/useCorrelationData'
 
+// Mirrors the hours+minutes input in PhoneTimeLogger.js — showing "2h
+// 30m" instead of a bare "150 minutes" serves the same readability goal
+// on the way back out.
+function formatDuration(totalMinutes) {
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+
+  if (hours === 0) return `${minutes}m`
+  if (minutes === 0) return `${hours}h`
+  return `${hours}h ${minutes}m`
+}
+
 function calculateCorrelation(data) {
   if (data.length < 2) {
     return 0
@@ -151,7 +163,7 @@ export default function CorrelationChart() {
 
               <div>
                 Phone time:{' '}
-                {item.phoneMinutes} minutes
+                {formatDuration(item.phoneMinutes)}
               </div>
 
               <div>
