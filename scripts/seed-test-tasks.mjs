@@ -13,6 +13,11 @@
 // Due dates are computed relative to whenever you run this, not
 // hardcoded, so the overdue/due-today/due-later spread stays meaningful
 // no matter when you run it.
+//
+// Also seeds a few tasks with NO due date, to exercise the "No Deadline
+// — Do This Next" section (weight-only ranking via rankByWeight in
+// data/rankTasks.js) — the original version of this script predated that
+// section and only covered the due-date decision.
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'
 
@@ -88,6 +93,36 @@ const TASKS = [
     priority: 5,
     dueDate: daysFromNow(30),
   },
+  // No due date — these only compete in the "No Deadline" section,
+  // ranked purely by weight.
+  {
+    title: 'Read for fun',
+    description: 'No due date, lowest weight — should sit at the bottom of that section.',
+    effort: 1,
+    priority: 1,
+    dueDate: null,
+  },
+  {
+    title: 'Clean desk',
+    description: 'No due date, tied weight with "Water plants" — created first, so should win that tiebreak.',
+    effort: 2,
+    priority: 2,
+    dueDate: null,
+  },
+  {
+    title: 'Water plants',
+    description: 'No due date, tied weight with "Clean desk" — created second, should lose that tiebreak.',
+    effort: 2,
+    priority: 2,
+    dueDate: null,
+  },
+  {
+    title: 'Update resume',
+    description: 'No due date, highest weight of the bunch — should be the decided "No Deadline" task.',
+    effort: 3,
+    priority: 4,
+    dueDate: null,
+  },
 ]
 
 async function seed() {
@@ -111,7 +146,7 @@ async function seed() {
       }
 
       const created = await response.json()
-      console.log(`✓ ${created.title} — weight ${weight}, due ${created.dueDate}`)
+      console.log(`✓ ${created.title} — weight ${weight}, due ${created.dueDate || 'no due date'}`)
     } catch (error) {
       console.error(`✗ ${task.title} — request failed:`, error.message)
       console.error('  Is `npm run dev` running? Is BASE_URL correct?')
