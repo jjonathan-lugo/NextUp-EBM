@@ -134,35 +134,6 @@ export default function ProductivityTipsFeed() {
       >
         <TipCard key={tip.id} tip={tip} />
       </div>
-
-      {/* Placeholder sections, scaffold-only per the project's stub
-          convention (see hooks/useWeightCalculator.js and
-          data/models/Task.js for the same pattern elsewhere) — filled
-          in visually so this column doesn't trail off into empty space
-          next to the (usually taller) decided-task column, but no real
-          logic behind them yet. Owner: Grace. */}
-      <h2 className={styles.sectionTitle}>Weekly Reflection</h2>
-      <div className={styles.stubCard}>
-        <span className={styles.stubBadge}>Coming soon</span>
-        <p>
-          A short summary of what you finished this week.
-          {/* TODO(Grace): pull from completed tasks (GET /api/tasks,
-              filter status === 'done' + completedAt within the last 7
-              days) once there's enough history across users to make a
-              weekly summary worth showing. */}
-        </p>
-      </div>
-
-      <h2 className={styles.sectionTitle}>Focus Streak</h2>
-      <div className={styles.stubCard}>
-        <span className={styles.stubBadge}>Coming soon</span>
-        <p>
-          Track consecutive days you've used Smart Start to decide what to work on.
-          {/* TODO(Grace): needs a per-day "used Smart Start" log to
-              count from — nothing currently records that a visit
-              happened, only the tasks themselves. */}
-        </p>
-      </div>
     </div>
   )
 }

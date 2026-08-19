@@ -141,16 +141,13 @@
   flex-wrap: wrap;
 }
 
-/* --- "Show all tasks" toggle + full list --- */
-.toggleRow {
-  margin: 0.5rem 0 1rem;
-}
-
-/* Capped height + its own scrollbar instead of growing the page —
-   "Show all tasks" could otherwise push the rest of the page (and the
-   other grid column) down by however many tasks exist. Bordered/muted
-   background so it reads as one contained panel, with inner padding so
-   rows don't touch the edges of that panel. */
+/* --- All Tasks (always visible, no toggle) --- */
+/* Capped height + its own scrollbar instead of growing the page — this
+   list is always rendered now (no "Show all tasks" click needed), so
+   without a cap it could push the rest of the page (and the other grid
+   column) down by however many tasks exist. Bordered/muted background
+   so it reads as one contained panel, with inner padding so rows don't
+   touch the edges of that panel. */
 .taskList {
   list-style: none;
   margin: 0;
@@ -334,34 +331,3 @@
   font-size: 0.95rem;
 }
 
-/* --- Stub sections (Weekly Reflection, Focus Streak) --- */
-/* Dashed border instead of tipCard/decisionCard's solid one — a
-   deliberate visual signal that this is scaffolding, not a finished
-   feature, so it doesn't read as broken or unstyled. */
-.stubCard {
-  background: var(--surface-muted);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
-  padding: var(--space);
-  margin-bottom: var(--space);
-}
-
-.stubBadge {
-  display: inline-block;
-  margin-bottom: 0.5rem;
-  padding: 0.15em 0.6em;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text-muted);
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.stubCard p {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}

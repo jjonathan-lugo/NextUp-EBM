@@ -28,8 +28,10 @@
 // missing due date, which moves it from the "no deadline" decision into
 // the due-date one on the next render). This is the only place in the
 // app that lists every task, so it's also where all of that management
-// happens; the full list is tucked behind a "Show all tasks" toggle
-// instead of being the primary view.
+// happens; the full "All Tasks" list is always visible (was previously
+// behind a "Show all tasks" toggle) but capped to a scrollable panel
+// (.taskList in smart-start-feed.module.css) so it doesn't push the
+// rest of the page down.
 //
 // Persistence: tasks live in Supabase (data/taskStore.js), not browser
 // storage, so anything done here — marking done, deleting, editing —
@@ -241,7 +243,6 @@ export default function TaskPicker() {
   const [editingId, setEditingId] = useState(null)
   const [recommendations, setRecommendations] = useState({})
   const [recommendationsLoading, setRecommendationsLoading] = useState(false)
-  const [showAll, setShowAll] = useState(false)
   const [actionError, setActionError] = useState('')
 
   useEffect(() => {
@@ -417,55 +418,48 @@ export default function TaskPicker() {
         </div>
       )}
 
-      <div className={styles.toggleRow}>
-        <Button variant="ghost" onClick={() => setShowAll((value) => !value)}>
-          {showAll ? 'Hide' : 'Show'} all tasks
-        </Button>
-      </div>
-
-      {showAll && (
-        <ul className={styles.taskList}>
-          {tasks.map((task) =>
-            editingId === task.id ? (
-              <li key={task.id} className={styles.taskRow}>
-                <EditTaskForm
-                  task={task}
-                  onCancel={() => setEditingId(null)}
-                  onSaved={handleSaved}
-                />
-              </li>
-            ) : (
-              <li key={task.id} className={styles.taskRow}>
+      <h2 className={styles.sectionTitle}>All Tasks</h2>
+      <ul className={styles.taskList}>
+        {tasks.map((task) =>
+          editingId === task.id ? (
+            <li key={task.id} className={styles.taskRow}>
+              <EditTaskForm
+                task={task}
+                onCancel={() => setEditingId(null)}
+                onSaved={handleSaved}
+              />
+            </li>
+          ) : (
+            <li key={task.id} className={styles.taskRow}>
+              {task.status !== 'done' && (
+                <UrgencyBadge task={task} recommendation={recommendations[task.id]} timezone={timezone} />
+              )}
+              <span
+                className={
+                  task.status === 'done'
+                    ? `${styles.taskTitle} ${styles.taskDone}`
+                    : styles.taskTitle
+                }
+              >
+                {task.title}
+              </span>
+              <span className={styles.taskMeta}>
+                {'Weight: '}
+                {task.weight ?? '—'}
+                {' — '}
+                {describeRecommendation(task, recommendations[task.id], timezone, recommendationsLoading)}
+              </span>
+              <div className={styles.taskActions}>
+                <Button variant="ghost" onClick={() => setEditingId(task.id)}>Edit</Button>
                 {task.status !== 'done' && (
-                  <UrgencyBadge task={task} recommendation={recommendations[task.id]} timezone={timezone} />
+                  <Button variant="success" onClick={() => handleMarkDone(task.id)}>Mark done</Button>
                 )}
-                <span
-                  className={
-                    task.status === 'done'
-                      ? `${styles.taskTitle} ${styles.taskDone}`
-                      : styles.taskTitle
-                  }
-                >
-                  {task.title}
-                </span>
-                <span className={styles.taskMeta}>
-                  {'Weight: '}
-                  {task.weight ?? '—'}
-                  {' — '}
-                  {describeRecommendation(task, recommendations[task.id], timezone, recommendationsLoading)}
-                </span>
-                <div className={styles.taskActions}>
-                  <Button variant="ghost" onClick={() => setEditingId(task.id)}>Edit</Button>
-                  {task.status !== 'done' && (
-                    <Button variant="success" onClick={() => handleMarkDone(task.id)}>Mark done</Button>
-                  )}
-                  <Button variant="danger" onClick={() => handleDelete(task.id)}>Delete</Button>
-                </div>
-              </li>
-            )
-          )}
-        </ul>
-      )}
+                <Button variant="danger" onClick={() => handleDelete(task.id)}>Delete</Button>
+              </div>
+            </li>
+          )
+        )}
+      </ul>
     </div>
   )
 }
