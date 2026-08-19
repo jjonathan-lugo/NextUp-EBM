@@ -3,27 +3,92 @@
   padding: 2rem;
   max-width: 640px;
   margin: 0 auto;
+  color: var(--text);
 }
 
 .main h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0 0 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
 }
 
-.nav {
+.tagline {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+
+/* --- Why NextUp --- */
+.about {
+  margin: 1.75rem 0;
+}
+
+.aboutTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.6rem;
+}
+
+.about p {
+  margin: 0 0 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.about p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Focus Queue (signed in) --- */
+.queueSection {
+  margin-bottom: 1.75rem;
+}
+
+.queueLead {
+  margin: 0 0 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* --- Feature cards --- */
+.featureGrid {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 2rem;
+  gap: 0.75rem;
 }
 
-.nav a {
-  color: #0076ff;
+.featureCard {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space);
+  color: inherit;
   text-decoration: none;
-  font-weight: 500;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.nav a:hover {
-  text-decoration: underline;
+.featureCard:hover {
+  border-color: var(--accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.featureTitle {
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.featureDescription {
+  margin: 0 0 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.featureCta {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--accent);
 }
