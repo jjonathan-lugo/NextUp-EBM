@@ -14,8 +14,7 @@ export default function RequireAuth({ children }) {
   }
 
   if (!user) {
-    return <p>Sign in (top right) to use this.</p>
+    return <p>Sign in to use this.</p>
   }
-
   return children
 }
